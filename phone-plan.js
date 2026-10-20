@@ -132,7 +132,7 @@ function hero(){return '<header class="mp-hero"><img class="mp-official-logo" sr
 function weekCards(){
  let sections='';
  for(let w=0;w<4;w++){
-  sections+='<section class="mp-week"><div class="mp-weekhead"><span>WEEK '+(w+1)+'</span><h3>'+(w+1)+'주차</h3></div><div class="mp-days">';
+  sections+='<details class="mp-week"'+(w===0?' open':'')+'><summary class="mp-weekhead"><div><span>WEEK '+(w+1)+'</span><h3>'+(w+1)+'주차</h3></div><span class="mp-weekchevron" aria-hidden="true">⌄</span></summary><div class="mp-days">';
   for(let d=w*7;d<w*7+7;d++){
     const x=current.days[d],kind=x.training?'운동일':'회복일';
     sections+='<article class="mp-day '+(x.training?'train':'rest')+'"><div class="mp-dayhead"><div><span>DAY '+String(x.day).padStart(2,'0')+'</span><strong> · '+kind+'</strong></div><small>유산소 '+fmt(x.aerobic)+'분</small></div>';
@@ -142,7 +142,7 @@ function weekCards(){
     }
     sections+='<div class="mp-rest"><b>운동</b> · '+(x.training?x.exercises.map(e=>safe(e.name)).join(' · '):'가벼운 활동과 회복')+'<br><b>휴식</b> · '+safe(x.rest)+'</div></article>';
   }
-  sections+='</div></section>';
+  sections+='</div></details>';
  }
  return sections;
 }
