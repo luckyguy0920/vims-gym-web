@@ -165,42 +165,42 @@ const rules=`
 const style=document.createElement('style');style.textContent=rules;document.head.appendChild(style);
 const stat=(k,v,m)=>'<div class="v28stat"><small>'+k+'</small><b>'+v+'</b><small>'+m+'</small></div>';
 function page(){
- if(!hasCourse())return title('28일 식사·운동·휴식 통합 계획','인바디 등록 후 목표 방향만 정하면 한 페이지에 28일 계획이 만들어집니다.')+
- '<div class="card empty"><h2>인바디 등록이 필요합니다.</h2><button class="btn primary" data-action="route" data-value="body">인바디·목표 등록하기</button></div>';
+ if(!hasCourse())return title('나의 28일 계획','인바디 입력 후 나의 계획을 확인하세요.')+
+ '<div class="card empty"><h2>인바디 입력이 필요해요</h2><button class="btn primary" data-action="route" data-value="body">인바디 입력 →</button></div>';
  const c=nutrition(),dname=clean(state.name||'회원');
  const kindLabel=clean(goalLabel()),bodyStats=
  stat('현재 체중',c.w==null?'—':c.w.toFixed(1)+' kg','인바디 측정값')+
  stat('체지방률',c.pbf==null?'—':c.pbf.toFixed(1)+' %','인바디 측정값')+
- stat('골격근량',c.s==null?'—':c.s.toFixed(1)+' kg','4주 후 다시 확인')+
- stat('제지방량',c.lean==null?'—':c.lean.toFixed(1)+' kg','체중 - 체지방량');
- const nutritionStats=stat('하루 열량 목표',c.kcal==null?'계산 보류':money(c.kcal)+' kcal','체성분 + 활동량에 기반한 추정')+
- stat('단백질 목표',c.protein==null?'—':money(c.protein)+' g','체중과 선택 목표 기준')+
- stat('탄수화물',c.carbs==null?'—':money(c.carbs)+' g','열량 중 남은 부분을 배분')+
- stat('지방',c.fats==null?'—':money(c.fats)+' g','열량의 약 29%');
- let html=title('28일 식사·운동·휴식 통합 계획','인바디 정보와 목표 방향만으로 전반적인 4주 흐름을 한 페이지에서 확인합니다.')+
- '<div class="v28"><div class="v28banner"><div><span class="v28tag">VIMS GYM · 28 DAYS</span><h2>'+kindLabel+' · 28일 계획</h2><p>'+dname+'님의 인바디 측정 정보를 기초로 28일 식사·운동·회복을 연결했습니다.<br>하루 카드를 열어 식재료와 중량도 확인할 수 있습니다.</p></div><button class="btn light" data-plan28="print">인쇄·PDF 저장</button></div>'+
- '<div class="v28stats">'+bodyStats+'</div><div class="v28note"><b>개인 특성 반영</b>'+clean(c.age)+'세 · '+(c.sex==='male'?'남성 계수':'여성 계수')+' · '+({sedentary:'활동 적음',light:'가벼운 활동',moderate:'보통 활동',high:'높은 활동량'}[c.activity]||'활동 미확인')+' · '+({beginner:'운동 초보',intermediate:'중급',advanced:'숙련'}[state.profile?.experience]||'운동 경험 미확인')+'<br>기초대사량 추정 '+(c.bmr==null?'보류':money(c.bmr)+'킬로칼로리')+' · 실제 신체상태와 생활습관에 따라 달라질 수 있습니다.</div><div class="v28stats">'+nutritionStats+'</div>'+
- '<div class="v28note"><b>이번 계획에 반영된 정보</b>체중·신장·골격근량·체지방량과 입력하신 나이·성별 계산 계수·생활 활동량·운동 경험을 반영했습니다. 기초대사량은 추정식에 따른 값이며 실제 측정치가 아닙니다.'+
+ stat('골격근량',c.s==null?'—':c.s.toFixed(1)+' kg','인바디')+
+ stat('제지방량',c.lean==null?'—':c.lean.toFixed(1)+' kg','추정치');
+ const nutritionStats=stat('하루 열량',c.kcal==null?'계산 보류':money(c.kcal)+' kcal','참고값')+
+ stat('단백질',c.protein==null?'—':money(c.protein)+' g','목표 기준')+
+ stat('탄수화물',c.carbs==null?'—':money(c.carbs)+' g','열량 배분')+
+ stat('지방',c.fats==null?'—':money(c.fats)+' g','열량 배분');
+ let html=title('나의 28일 계획','식사 · 운동 · 휴식을 한눈에')+
+ '<div class="v28"><div class="v28banner"><div><span class="v28tag">VIMS GYM · 28일 플랜</span><h2>'+kindLabel+'</h2><p>28일 식단 · 운동 · 회복<br>식재료와 레시피까지 확인하세요.</p></div></div>'+
+ '<div class="v28stats">'+bodyStats+'</div><div class="v28note"><b>개인 설정</b>'+clean(c.age)+'세 · '+(c.sex==='male'?'남성 계수':'여성 계수')+' · '+({sedentary:'활동 적음',light:'가벼운 활동',moderate:'보통 활동',high:'높은 활동량'}[c.activity]||'활동 미확인')+' · '+({beginner:'초보',intermediate:'중급',advanced:'숙련'}[state.profile?.experience]||'운동 경험 미확인')+'<br>기초대사량 '+(c.bmr==null?'보류':money(c.bmr)+'킬로칼로리')+' (추정)</div><div class="v28stats">'+nutritionStats+'</div>'+
+ '<div class="v28note"><b>계산 안내</b>인바디 · 나이 · 활동량을 반영한 추정 계획입니다.'+
  c.notes.map(m=>'<div>• '+clean(m)+'</div>').join('')+'</div>';
  for(let w=0;w<4;w++){
   const wk=weekText[w],targets=weekTargets(w);
-  html+='<div class="v28week"><h3>'+(w+1)+'주차 · '+wk[0]+'</h3><p>'+wk[1]+'</p></div><div class="v28weekbar"><span>근력운동 주 '+sessionDays(w).length+'회</span><span>중강도 유산소 목표 '+targets.mins+'분/주</span><span>동작당 '+targets.sets+'세트 · '+targets.reps+'</span></div><div class="v28days">';
+  html+='<div class="v28week"><h3>'+(w+1)+'주차 · '+wk[0]+'</h3><p>'+wk[1]+'</p></div><div class="v28weekbar"><span>근력 주 '+sessionDays(w).length+'회</span><span>유산소 '+targets.mins+'분/주</span><span>'+targets.sets+'세트 · '+targets.reps+'</span></div><div class="v28days">';
   for(let day=w*7+1;day<=w*7+7;day++){
    const v=daily(day,c),s=v.s;
    const menu=v.meals.map(m=>'<div><strong>'+groups[m.type]+'</strong> '+clean(m.title)+(c.kcal==null?'':' <small>약 '+money(m.kcal)+' kcal</small>')+'</div>').join('');
-   const train=s.training?'<strong>빔스짐 근력 4종 · '+s.wt.sets+'세트 × '+s.wt.reps+'</strong><small>'+s.machines.map(e=>clean(e.name)).join(' · ')+'</small><small>세트 사이 '+s.wt.rest+' 휴식</small>':'<strong>회복일 · 근력운동 쉬기</strong><small>관절 가동성 및 스트레칭 5~10분, 무리 없는 산책</small>';
+   const train=s.training?'<strong>근력 4종 · '+s.wt.sets+'세트 × '+s.wt.reps+'</strong><small>'+s.machines.map(e=>clean(e.name)).join(' · ')+'</small><small>세트 사이 '+s.wt.rest+' 휴식</small>':'<strong>회복일</strong><small>가벼운 걷기 · 스트레칭 5~10분</small>';
    const portion=v.meals.map(m=>'<div class="v28detail"><b>'+groups[m.type]+'</b> · '+m.items.map(it=>clean(f[it.k]?.[0]||it.k)+' '+money(it.g)+'g').join(', ')+'</div>').join('');
-   html+='<article class="v28card '+(s.training?'train':'rest')+'"><div class="v28cardhead"><div><small>DAY '+String(day).padStart(2,'0')+'</small><b>'+(s.training?'근력 훈련일':'회복·활동일')+'</b></div><span class="v28pill">유산소 '+s.cardio+'분</span></div>'+
-   '<div class="v28line"><b>식사</b><div>'+menu+(c.kcal==null?'':'<small>식사 예상 총 '+money(v.sum.kcal)+' kcal · 단백질 '+money(v.sum.p)+' g</small>')+'</div></div>'+
+   html+='<article class="v28card '+(s.training?'train':'rest')+'"><div class="v28cardhead"><div><small>DAY '+String(day).padStart(2,'0')+'</small><b>'+(s.training?'운동일':'회복일')+'</b></div><span class="v28pill">유산소 '+s.cardio+'분</span></div>'+
+   '<div class="v28line"><b>식사</b><div>'+menu+(c.kcal==null?'':'<small>총 '+money(v.sum.kcal)+' kcal · 단백질 '+money(v.sum.p)+' g</small>')+'</div></div>'+
    '<div class="v28line"><b>운동</b><div>'+train+'</div></div>'+
-   '<div class="v28line"><b>휴식</b><div>'+ (s.training?'운동 후 정리운동과 부위별 통증 점검':'수면과 회복에 집중, 다음 훈련일 준비') +'<small>수면 '+(Number(state.profile?.age)>=65?'7~8시간':'7~9시간')+'을 기준으로, 개인 컨디션에 맞춰 조절</small></div></div>'+
-   '<details><summary>식재료와 권장량 상세 보기</summary>'+portion+'<div class="v28detail">식이섬유 추정 '+money(v.sum.fiber)+' g</div></details>'+
+   '<div class="v28line"><b>휴식</b><div>'+ (s.training?'정리운동 · 통증 확인':'가벼운 활동 · 충분한 휴식') +'<small>수면 '+(Number(state.profile?.age)>=65?'7~8시간':'7~9시간')+' · 컨디션에 맞춰 조절</small></div></div>'+
+   '<details><summary>식재료 보기</summary>'+portion+'<div class="v28detail">식이섬유 '+money(v.sum.fiber)+' g</div></details>'+
    '<button class="btn ghost small" style="margin-top:10px" data-action="day-diet" data-value="'+day+'">DAY '+day+' 식사·운동 기록 →</button></article>';
   }
   html+='</div>';
  }
- return html+'<div class="v28actions"><button class="btn primary" data-action="route" data-value="body">인바디·목표 수정</button><button class="btn ghost" data-action="route" data-value="nutrition">끼니별 식단 더 자세히</button><button class="btn ghost" data-plan28="print">인쇄·PDF 저장</button></div>'+
- '<div class="v28warn"><b>사용 전 안내</b><p>28일 계획은 건강한 성인의 일반적 참고 예시입니다. 질환·임신·수유·알레르기·섭식 문제·운동 통증이 있다면 의료진·영양사·지도자와 별도로 조정해야 합니다. 음식 열량과 성분은 조리 방식별로 다르며 비타민·미네랄 충족이나 알레르기 교차접촉까지 검증하지 않았습니다. 수치 불일치나 저체중 등의 상황에서는 자동 열량 생성을 보류합니다.</p></div></div>';
+ return html+'<div class="v28actions"><button class="btn primary" data-action="route" data-value="body">설정 수정</button><button class="btn ghost" data-action="route" data-value="nutrition">식단 보기</button></div>'+
+ '<div class="v28warn"><b>이용 안내</b><p>성인용 참고 계획입니다. 열량은 추정치이며, 질환·알레르기·임신·부상 등은 전문가와 별도 확인이 필요합니다.</p></div></div>';
 }
 plan=page;
 const previousRender=render;
@@ -209,7 +209,7 @@ render=function(){
  if(['home','body','course','nutrition'].includes(route)){
   const v=document.querySelector('#view');
   if(v&&!v.querySelector('[data-plan28="open"]')){
-   const wrap=document.createElement('div');wrap.className='v28actions';wrap.innerHTML='<button class="btn primary" type="button" data-action="route" data-value="plan" data-plan28="open">▦ 28일 식사·운동·휴식 전체 보기 →</button>';
+   const wrap=document.createElement('div');wrap.className='v28actions';wrap.innerHTML='<button class="btn primary" type="button" data-action="route" data-value="plan" data-plan28="open">28일 계획 보기 →</button>';
    v.insertBefore(wrap,v.firstChild);
   }
  }
