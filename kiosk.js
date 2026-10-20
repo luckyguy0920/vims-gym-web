@@ -20,7 +20,7 @@ function wipeRuntime(){
   state.name='';state.routine=[];state.routineDone={};
   state.purpose='기초체력';state.area='전신';state.selectedDay=1;
   state.start=localDate(new Date());
-  state.nutritionPrefs={};
+  state.nutritionPrefs={};state.profile={};
   try{if(bodyPhotoURL)URL.revokeObjectURL(bodyPhotoURL);}catch(e){}
   bodyPhotoURL='';
   clearPrevious();
