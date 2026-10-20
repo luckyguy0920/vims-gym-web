@@ -68,21 +68,21 @@ function readStored(){
  return null;
 }
 function renderError(msg){
- root.innerHTML=hero()+'<div class="mp-status warn"><b>계획을 불러오지 못했습니다.</b>'+safe(msg)+'</div>'+
- '<div class="mp-actions"><a href="/receive" class="mp-sub">내 휴대전화에 저장한 계획 확인</a></div>'+
- '<p class="mp-micro">일회용 코드는 한 번 사용하거나 10분이 지나면 만료됩니다. 공용 웹사이트에서 새로운 코드를 생성해 주세요.</p>';
+ root.innerHTML=hero()+'<div class="mp-status warn"><b>계획을 열 수 없어요</b>'+safe(msg)+'</div>'+
+ '<div class="mp-actions"><a href="/receive" class="mp-sub">저장된 계획 확인</a></div>'+
+ '<p class="mp-micro">일회용 코드는 10분 후 만료됩니다. 새 코드는 빔스짐 웹에서 발급받으세요.</p>';
 }
-function hero(){return '<header class="mp-hero"><img class="mp-official-logo" src="/vims-logo.svg?v=1" alt="VG VIMS GYM 공식 로고" width="250" height="33"><span>나의 28일 계획</span><h1>내 휴대전화에서 이어보기</h1><p>일회성 공유 코드를 이용해 가져온 식사·운동·휴식과 참고 레시피입니다. 원본 인바디 측정값과 이름은 전송되지 않습니다.</p></header>';}
+function hero(){return '<header class="mp-hero"><img class="mp-official-logo" src="/vims-logo.svg?v=1" alt="VG VIMS GYM 공식 로고" width="250" height="33"><span>VIMS GYM · 28일 관리</span><h1>나의 28일 플랜</h1><p>식사 · 운동 · 휴식 · 레시피를 한눈에</p></header>';}
 function weekCards(){
  let sections='';
  for(let w=0;w<4;w++){
-  sections+='<section class="mp-week"><div class="mp-weekhead"><span>WEEK '+(w+1)+'</span><h3>'+(w+1)+'주차 계획</h3></div><div class="mp-days">';
+  sections+='<section class="mp-week"><div class="mp-weekhead"><span>WEEK '+(w+1)+'</span><h3>'+(w+1)+'주차</h3></div><div class="mp-days">';
   for(let d=w*7;d<w*7+7;d++){
-    const x=current.days[d],kind=x.training?'근력운동일':'회복일';
+    const x=current.days[d],kind=x.training?'운동일':'회복일';
     sections+='<article class="mp-day '+(x.training?'train':'rest')+'"><div class="mp-dayhead"><div><span>DAY '+String(x.day).padStart(2,'0')+'</span><strong> · '+kind+'</strong></div><small>유산소 '+fmt(x.aerobic)+'분</small></div>';
     for(const m of x.meals){
       const img=m.recipeId?'<img loading="lazy" alt="참고 레시피 사진" src="'+photo(m.recipeId)+'">':'♨';
-      sections+='<div class="mp-meal"><figure>'+img+'</figure><div class="mp-mealtext"><small>'+LABEL[m.type]+'</small><strong>'+safe(m.title)+'</strong><em>'+fmt(m.kcal)+'킬로칼로리 · 참고 사진</em></div><button type="button" class="mp-recipe-btn" data-phone-recipe="'+d+':'+m.type+'">조리법</button></div>';
+      sections+='<div class="mp-meal"><figure>'+img+'</figure><div class="mp-mealtext"><small>'+LABEL[m.type]+'</small><strong>'+safe(m.title)+'</strong><em>'+fmt(m.kcal)+'kcal · 참고 사진</em></div><button type="button" class="mp-recipe-btn" data-phone-recipe="'+d+':'+m.type+'">조리법</button></div>';
     }
     sections+='<div class="mp-rest"><b>운동</b> · '+(x.training?x.exercises.map(e=>safe(e.name)).join(' · '):'가벼운 활동과 회복')+'<br><b>휴식</b> · '+safe(x.rest)+'</div></article>';
   }
@@ -91,20 +91,20 @@ function weekCards(){
  return sections;
 }
 function render(){
- if(!current){renderError('저장된 계획이 없습니다. 공용 기기에서 받은 큐알코드를 휴대전화로 스캔해 주세요.');return;}
+ if(!current){renderError('저장된 계획이 없습니다. 빔스짐에서 큐알코드를 스캔해 주세요.');return;}
  const status=permanent?
- '<div class="mp-status"><b>이 휴대전화에 28일 계획을 보관했습니다.</b>같은 휴대전화의 같은 브라우저에서 이 주소를 다시 열면 계획이 표시됩니다. 조리법 사진은 인터넷 연결이 필요합니다.</div>'+
- '<div class="mp-actions"><button type="button" class="mp-sub" data-phone-action="delete">내 휴대전화에서 계획 삭제</button></div>':
- '<div class="mp-status warn"><b>가져오기는 완료됐지만 아직 보관되지 않았습니다.</b>현재는 임시로 열려 있습니다. 개인 소유 휴대전화라면 아래 동의를 확인한 후 저장할 수 있습니다. 공용 기기라면 저장하지 마세요.</div>'+
- '<label class="mp-check"><input type="checkbox" id="mpPersonal"><span>이 기기는 개인 소유이며, 28일 계획을 이 브라우저에 보관하는 데 동의합니다.</span></label>'+
- '<div class="mp-actions"><button type="button" class="mp-primary" id="mpSave" data-phone-action="save" disabled>이 휴대전화에 28일 계획 보관하기</button><button type="button" class="mp-sub" data-phone-action="temporary">저장하지 않고 보기</button></div>';
+ '<div class="mp-status"><b>내 기기에 저장됨</b>이 브라우저에서 다시 열 수 있습니다. 레시피 사진은 인터넷 연결이 필요합니다.</div>'+
+ '<div class="mp-actions"><button type="button" class="mp-sub" data-phone-action="delete">저장된 계획 삭제</button></div>':
+ '<div class="mp-status warn"><b>계획을 가져왔어요</b>내 휴대전화라면 저장할 수 있습니다. 공용 기기에는 저장하지 마세요.</div>'+
+ '<label class="mp-check"><input type="checkbox" id="mpPersonal"><span>내 휴대전화에 계획을 저장하는 데 동의합니다.</span></label>'+
+ '<div class="mp-actions"><button type="button" class="mp-primary" id="mpSave" data-phone-action="save" disabled>내 휴대전화에 저장</button><button type="button" class="mp-sub" data-phone-action="temporary">이번에만 보기</button></div>';
  const summary='<div class="mp-metrics"><div class="mp-metric"><span>관리 목표</span><b>'+safe(current.goal)+'</b></div>'+
- '<div class="mp-metric"><span>하루 참고 열량</span><b>'+(current.kcal==null?'산출 보류':fmt(current.kcal)+'kcal')+'</b></div>'+
- '<div class="mp-metric"><span>하루 단백질 참고</span><b>'+(current.protein==null?'—':fmt(current.protein)+'g')+'</b></div></div>';
- root.innerHTML=hero()+status+summary+'<div class="mp-heading"><h2>28일 식사 · 운동 · 휴식</h2><p>사진과 조리법을 눌러 식재료 분량을 확인하세요.</p></div>'+weekCards()+
- '<div class="mp-footer"><h2>더 전문적인 관리가 필요하신가요?</h2><p>이 계획은 시작점입니다. 빔스짐 트레이너와 운동 자세, 개인별 식단, 회복과 회원 등록 방법을 상담해 보세요.</p>'+
+ '<div class="mp-metric"><span>하루 열량</span><b>'+(current.kcal==null?'산출 보류':fmt(current.kcal)+'kcal')+'</b></div>'+
+ '<div class="mp-metric"><span>하루 단백질</span><b>'+(current.protein==null?'—':fmt(current.protein)+'g')+'</b></div></div>';
+ root.innerHTML=hero()+status+summary+'<div class="mp-heading"><h2>28일 전체 일정</h2><p>메뉴를 누르면 조리법을 볼 수 있습니다.</p></div>'+weekCards()+
+ '<div class="mp-footer"><h2>다음 단계도 함께하세요.</h2><p>운동 · 식단 · 회원 등록까지, 빔스짐에서 상담하세요.</p>'+
  '<a href="'+TALK+'" target="_blank" rel="noopener noreferrer">상담 시작</a></div>'+
- '<p class="mp-micro">안내: 화면의 음식 사진은 별도의 비슷한 참고 레시피일 수 있고, 계획에 적힌 식재료 중량과 원본 참고 레시피의 분량은 다를 수 있습니다. 열량은 일반 식품 성분 추정치이며 의료적 식단 처방이 아닙니다. 개인 기기가 아닌 곳에는 저장하지 마세요.</p>';
+ '<p class="mp-micro">열량은 참고 추정치입니다. 사진은 비슷한 메뉴일 수 있으며, 식재료 중량은 계획표를 우선하세요. 공용 기기에는 저장하지 마세요.</p>';
 }
 async function showRecipe(dayIdx,type){
  if(!current)return;
@@ -113,12 +113,12 @@ async function showRecipe(dayIdx,type){
  const modal=document.createElement('div');modal.className='mp-modalshade';modal.id='mpModal';
  const products=entry.items.map(x=>'<div><span>'+safe(x.name)+'</span><b>'+fmt(x.g)+'g</b></div>').join('');
  modal.innerHTML='<div class="mp-modal" role="dialog" aria-modal="true"><header><b>'+LABEL[type]+' · DAY '+(dayIdx+1)+'</b><button type="button" data-phone-action="close" class="mp-modalclose">닫기 ×</button></header>'+
- '<h2>'+safe(entry.title)+'</h2><p>이 끼니의 개인별 식재료 분량입니다. 예상 '+fmt(entry.kcal)+'킬로칼로리, 단백질 '+fmt(entry.protein)+'g.</p>'+
- '<h3>계획표에 포함된 재료와 중량</h3><div class="mp-ingredients">'+products+'</div>'+
- '<div id="mpRecipeSource"><p>참고 레시피를 불러오고 있습니다…</p></div></div>';
+ '<h2>'+safe(entry.title)+'</h2><p>식재료 중량 · 약 '+fmt(entry.kcal)+'킬로칼로리, 단백질 '+fmt(entry.protein)+'g.</p>'+
+ '<h3>식재료 · 중량</h3><div class="mp-ingredients">'+products+'</div>'+
+ '<div id="mpRecipeSource"><p>조리법을 불러오는 중…</p></div></div>';
  document.body.appendChild(modal);document.body.style.overflow='hidden';
  const target=modal.querySelector('#mpRecipeSource');
- if(!entry.recipeId){target.innerHTML='<p>정확히 일치하는 기존 레시피가 없어 계획표의 재료를 기준으로 조리해 주세요. 익히는 재료는 충분히 가열하고 개인 알레르기를 확인하세요.</p>';return;}
+ if(!entry.recipeId){target.innerHTML='<p>연결된 레시피가 없습니다. 위 재료·중량을 기준으로 충분히 익혀 조리하세요.</p>';return;}
  try{
  const resp=await fetch('/api/recipe/'+Number(entry.recipeId),{cache:'force-cache'});
  if(!resp.ok)throw Error('레시피 정보 수신 실패');
@@ -126,19 +126,19 @@ async function showRecipe(dayIdx,type){
  if(!target.isConnected)return;
  target.innerHTML='<h3>비슷한 참고 레시피 · '+safe(ref.name)+'</h3>'+
  '<img class="mp-coverphoto" loading="lazy" alt="'+safe(ref.name)+' 참고 요리 사진" src="'+photo(entry.recipeId)+'">'+
- '<p><b>참고 안내</b> · 이 레시피는 계획표의 음식과 완전히 같지 않을 수 있습니다. 식재료와 중량은 반드시 위의 개인별 계획을 우선하세요.</p>'+
- '<h3>원본 참고 레시피의 조리 순서</h3><ol>'+(ref.steps||[]).map(x=>'<li>'+safe(x)+'</li>').join('')+'</ol>'+
+ '<p><b>참고 안내</b> · 비슷한 조리 예시입니다. 재료·중량은 위 계획을 우선하세요.</p>'+
+ '<h3>조리 순서</h3><ol>'+(ref.steps||[]).map(x=>'<li>'+safe(x)+'</li>').join('')+'</ol>'+
  ((ref.tips||[]).length?'<h3>조리 팁</h3><ul>'+ref.tips.map(x=>'<li>'+safe(x)+'</li>').join('')+'</ul>':'');
  }catch(e){if(target.isConnected)target.innerHTML='<p>참고 레시피를 일시적으로 불러올 수 없습니다. 위의 식재료와 중량은 그대로 확인하실 수 있습니다.</p>';}
 }
 async function redeem(code){
  if(busy)return;busy=true;
- root.innerHTML=hero()+'<div class="mp-status"><b>일회용 계획표를 가져오는 중입니다.</b>완료되면 휴대전화 보관 여부를 선택할 수 있습니다.</div>';
+ root.innerHTML=hero()+'<div class="mp-status"><b>계획을 불러오는 중…</b>가져온 후 저장 여부를 선택하세요.</div>';
  try{
  const response=await fetch('/api/handoff/redeem',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code}),cache:'no-store'});
  const result=await response.json();
  if(!response.ok)throw Error(result.detail||'전달 코드가 만료됐습니다.');
- if(result.version!==1||!Array.isArray(result.days)||result.days.length!==28)throw Error('가져온 계획 형식이 올바르지 않습니다.');
+ if(result.version!==1||!Array.isArray(result.days)||result.days.length!==28)throw Error('계획을 확인할 수 없습니다.');
  current=result;permanent=false;render();
  }catch(e){const stored=readStored();if(stored){current=stored;permanent=true;render();}else renderError(e.message||'잠시 후 다시 시도해 주세요.');}
  finally{busy=false;}
