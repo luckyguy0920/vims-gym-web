@@ -34,7 +34,7 @@ button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus
 .mp-meal img{width:100%;height:100%;object-fit:cover}.mp-meal .mp-mealtext{flex:1;min-width:0}.mp-meal small{display:block;color:#42629b;font-size:10px;font-weight:900}.mp-meal strong{display:block;font-size:12px;line-height:1.6;color:#344962}.mp-meal em{font-style:normal;font-size:10px;color:#8794a5}
 .mp-recipe-btn{padding:7px 9px;background:#edf4ff;border:1px solid #c9dbf4;border-radius:8px;color:#2459aa;font-weight:900;font-size:11px}
 .mp-rest{font-size:11px;color:#5d7189;line-height:1.7;padding-top:10px;border-top:1px dashed #edf1f6}.mp-rest b{color:#294b7e}
-.mp-footer{background:#142f52;color:white;border-radius:19px;padding:23px;margin-top:26px}.mp-footer h2{font-size:22px;margin:0 0 9px}.mp-footer p{color:#d8e7f7;font-size:13px;line-height:1.8}.mp-footer a{margin-top:10px;background:#c8f295;color:#1d3927;display:inline-flex;align-items:center;padding:13px 17px;border-radius:11px;text-decoration:none;font-weight:900}
+.mp-footer{background:#142f52;color:white;border-radius:19px;padding:23px;margin-top:26px}.mp-footer h2{font-size:22px;margin:0 0 9px}.mp-footer p{color:#d8e7f7;font-size:13px;line-height:1.8}.mp-footer a{margin-top:10px;background:#FF7A00;color:#fff;display:inline-flex;align-items:center;padding:13px 17px;border-radius:11px;text-decoration:none;font-weight:900}
 .mp-micro{font-size:11px;line-height:1.8;color:#8290a2;margin:13px 0}
 .mp-modalshade{position:fixed;inset:0;background:#0b182cce;z-index:9000;display:flex;justify-content:center;align-items:center;padding:15px}
 .mp-modal{max-width:610px;width:100%;max-height:90vh;overflow-y:auto;background:#fff;border-radius:17px;padding:19px}
@@ -45,19 +45,20 @@ button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus
 .mp-modal ol,.mp-modal ul{padding-left:21px;color:#536b85;font-size:13px;line-height:1.95}.mp-modal p{font-size:12px;color:#6d7e92;line-height:1.8}
 @media(max-width:680px){.mp-metrics{grid-template-columns:1fr 1fr}.mp-days{grid-template-columns:1fr}.mp-ingredients{grid-template-columns:1fr}.mp-wrap{padding:10px 10px 140px}.mp-hero{padding:20px}}
 .mp-official-logo{width:min(250px,80%);height:auto;aspect-ratio:1410/185;display:block;object-fit:contain;object-position:left center;margin:2px 0 17px}
-.mp-fixed-consult{position:fixed;z-index:100;bottom:calc(13px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(100% - 26px,760px);
-  display:flex;align-items:center;justify-content:space-between;gap:12px;background:#132e50;border-radius:15px;padding:11px 12px 11px 17px;color:#fff;box-shadow:0 9px 36px #162b4680}
-.mp-fixed-consult span{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900}
-.mp-fixed-consult small{font-size:10px;color:#b7d49c;font-weight:800}
-.mp-fixed-consult a{background:#c9f191;border-radius:10px;padding:12px 16px;color:#1e3728;text-decoration:none;font-weight:900;font-size:13px;white-space:nowrap}
-@media(max-width:370px){.mp-fixed-consult span{font-size:10px}.mp-fixed-consult a{font-size:11px;padding:11px 9px}}
+.mp-fixed-consult{position:fixed;z-index:100;bottom:calc(16px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);
+ width:min(calc(100% - 32px),420px);padding:0;box-shadow:none;background:transparent}
+.mp-fixed-consult a{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:12px 16px;
+ border-radius:14px;background:#FF7A00;color:#fff;text-decoration:none;font-weight:900;font-size:16px;
+ box-shadow:0 10px 24px rgba(255,122,0,.28);transition:background-color .2s}
+.mp-fixed-consult a:hover{background:#F06D00}
+.mp-fixed-consult a:focus-visible{outline:3px solid #174b8f;outline-offset:3px}
 @media print{.mp-fixed-consult{display:none!important}}
 `;
 const style=document.createElement('style');style.textContent=styles;document.head.appendChild(style);
 const footerAction=document.createElement('aside');
 footerAction.className='mp-fixed-consult';
 footerAction.setAttribute('aria-label','언제나 이용할 수 있는 빔스짐 네이버 톡톡 상담');
-footerAction.innerHTML='<span><small>VG VIMS GYM</small>운동 · 식단 상담</span><a target="_blank" rel="noopener noreferrer" href="'+TALK+'">네이버 톡톡 상담 ↗</a>';
+footerAction.innerHTML='<a target="_blank" rel="noopener noreferrer" href="'+TALK+'" aria-label="네이버 톡톡으로 상담 시작, 새 창 열림">상담 시작</a>';
 document.body.appendChild(footerAction);
 function readStored(){
  try{
@@ -102,7 +103,7 @@ function render(){
  '<div class="mp-metric"><span>하루 단백질 참고</span><b>'+(current.protein==null?'—':fmt(current.protein)+'g')+'</b></div></div>';
  root.innerHTML=hero()+status+summary+'<div class="mp-heading"><h2>28일 식사 · 운동 · 휴식</h2><p>사진과 조리법을 눌러 식재료 분량을 확인하세요.</p></div>'+weekCards()+
  '<div class="mp-footer"><h2>더 전문적인 관리가 필요하신가요?</h2><p>이 계획은 시작점입니다. 빔스짐 트레이너와 운동 자세, 개인별 식단, 회복과 회원 등록 방법을 상담해 보세요.</p>'+
- '<a href="'+TALK+'" target="_blank" rel="noopener noreferrer">네이버 톡톡 · 맞춤 상담 문의 ↗</a></div>'+
+ '<a href="'+TALK+'" target="_blank" rel="noopener noreferrer">상담 시작</a></div>'+
  '<p class="mp-micro">안내: 화면의 음식 사진은 별도의 비슷한 참고 레시피일 수 있고, 계획에 적힌 식재료 중량과 원본 참고 레시피의 분량은 다를 수 있습니다. 열량은 일반 식품 성분 추정치이며 의료적 식단 처방이 아닙니다. 개인 기기가 아닌 곳에는 저장하지 마세요.</p>';
 }
 async function showRecipe(dayIdx,type){
