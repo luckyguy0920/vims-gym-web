@@ -72,6 +72,7 @@ def index():
         '<script src="/modern-ui.js?v=1"></script>'
         '<script src="/dark-ui.js?v=1"></script>'
         '<script src="/layout-polish.js?v=1"></script>'
+        '<script src="/exercise-guide-bridge.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -263,6 +264,10 @@ def dark_ui_script():
 @app.get("/layout-polish.js")
 def polished_layout_script():
     return FileResponse(ROOT / "layout-polish.js",media_type="application/javascript",headers={"Cache-Control":"no-store"})
+
+@app.get("/exercise-guide-bridge.js")
+def exercise_guide_bridge():
+    return FileResponse(ROOT / "exercise-guide-bridge.js",media_type="application/javascript",headers={"Cache-Control":"no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
