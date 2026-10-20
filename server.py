@@ -87,6 +87,10 @@ def index():
 @app.get("/nutrition.js")
 def nutrition_script():
     return FileResponse(ROOT/"nutrition.js", media_type="application/javascript")
+
+@app.get("/plan28.js")
+def plan28_script():
+    return FileResponse(ROOT/"plan28.js",media_type="application/javascript")
 @app.get("/favicon.ico")
 def favicon():return FileResponse(ROOT/"favicon.svg",media_type="image/svg+xml")
 @app.get("/api/status")
