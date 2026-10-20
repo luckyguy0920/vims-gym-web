@@ -82,7 +82,7 @@ def run_ocr(raw):
 @app.get("/")
 def index():
     page=(ROOT/"index.html").read_text(encoding="utf-8")
-    return HTMLResponse(page.replace("</body>", '<script src="/nutrition.js?v=2"></script><script src="/plan28.js?v=1"></script></body>'))
+    return HTMLResponse(page.replace("</body>", '<script src="/nutrition.js?v=2"></script><script src="/plan28.js?v=1"></script><script src="/autoflow.js?v=1"></script></body>'))
 
 @app.get("/nutrition.js")
 def nutrition_script():
@@ -91,6 +91,10 @@ def nutrition_script():
 @app.get("/plan28.js")
 def plan28_script():
     return FileResponse(ROOT/"plan28.js",media_type="application/javascript")
+
+@app.get("/autoflow.js")
+def autoflow_script():
+    return FileResponse(ROOT/"autoflow.js",media_type="application/javascript")
 @app.get("/favicon.ico")
 def favicon():return FileResponse(ROOT/"favicon.svg",media_type="image/svg+xml")
 @app.get("/api/status")
