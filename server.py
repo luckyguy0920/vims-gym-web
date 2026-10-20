@@ -36,6 +36,7 @@ def index():
         'localStorage.removeItem(k);sessionStorage.removeItem(k)})}catch(e){}</script>'
     )
     html = html.replace("<script>\n'use strict';", bootstrap + "<script>\n'use strict';", 1)
+    html = html.replace("</head>", '<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2"/></head>', 1)
     scripts = (
         '<script src="/nutrition.js?v=2"></script>'
         '<script src="/plan28.js?v=3"></script>'
@@ -219,6 +220,10 @@ def vims_official_logo():
 @app.get("/branding.js")
 def brand_script():
     return FileResponse(ROOT / "branding.js", media_type="application/javascript", headers={"Cache-Control": "no-store"})
+
+@app.get("/favicon.svg")
+def favicon_svg():
+    return FileResponse(ROOT / "favicon.svg", media_type="image/svg+xml")
 
 @app.get("/favicon.ico")
 def favicon():
