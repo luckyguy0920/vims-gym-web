@@ -55,29 +55,28 @@ function modalBox({title,message,body='',actions=''}) {
 function consult(){
   if(visibleWarning)return;
   modalBox({
-    title:'내 몸에 맞는 관리, 전문가와 함께 시작하세요',
-    message:'자동 계획은 시작점입니다. 빔스짐에서 운동 목표와 기구 사용, 체형·움직임 상태를 상담하고 회원 등록 방법도 안내받으실 수 있습니다.',
+    title:'빔스짐 맞춤 상담',
+    message:'운동 · 식사 · 회원 등록을 편하게 문의하세요.',
     body:'<div class="vk-contactdetails">'+
-      '<div><span>상담 문의</span><strong>네이버 톡톡으로 문의</strong><small>빔스짐 상담 채널에서 질문과 등록 상담을 진행하세요.</small></div>'+
+      '<div><span>상담 문의</span><strong>네이버 톡톡으로 문의</strong><small>네이버 톡톡으로 연결됩니다.</small></div>'+
       '<div><span>현장 상담·회원 등록</span><strong>'+ADDRESS+'</strong><small>인바디 원본 결과지를 가져오시면 상담에 도움이 됩니다.</small></div>'+
-      '<div class="vk-privacy">입력하신 측정값은 상담 요청과 함께 자동 전송되지 않습니다. 현장에서 필요할 때 직접 보여주세요.</div>'+
+      '<div class="vk-privacy">입력 정보는 톡톡으로 전송되지 않습니다.</div>'+
       '</div>',
     actions:'<a class="vk-action-main" href="'+TALK_URL+'" target="_blank" rel="noopener noreferrer">상담 시작 ↗</a>'+
       '<button type="button" class="vk-action-sub" data-kiosk="close">계획으로 돌아가기</button>'+
-      '<button type="button" class="vk-action-end" data-kiosk="finish">이용 종료 · 정보 지우기</button>'
+      '<button type="button" class="vk-action-end" data-kiosk="finish">이용 종료</button>'
   });
 }
 function cta(){
-  return `<section class="vk-sales" aria-label="전문 상담 및 회원 등록">
-   <div class="vk-salesheader"><span>VIMS GYM · 맞춤 운동 관리</span><h2>계획을 세웠다면, 이제 나에게 맞게 실행할 차례입니다.</h2><p>회원님의 현재 몸 상태와 움직임, 운동 경험은 숫자만으로 모두 알 수 없습니다. 빔스짐 트레이너와 함께 운동·식사·회복 방법을 구체적으로 조정해 보세요.</p></div>
-   <div class="vk-sellingpoints"><div><b>01</b> 운동 자세·기구 사용 상담</div><div><b>02</b> 체성분 목표에 따른 관리 방향</div><div><b>03</b> 개인지도 및 회원권 등록 안내</div></div>
-   <div class="vk-ctabuttons"><a class="vk-primary" href="${TALK_URL}" target="_blank" rel="noopener noreferrer">상담 시작 <span>→</span></a><button type="button" class="vk-secondary" data-kiosk="finish">이용 종료 · 정보 지우기</button></div>
-   <p class="vk-safe">이 결과는 이번 이용 중에만 표시됩니다. 공용 기기에 파일을 내려받거나 인쇄할 경우 개인 정보가 남을 수 있으니 주의하세요.</p>
-  </section>`;
+ return `<section class="vk-sales" aria-label="전문 상담">
+  <div class="vk-salesheader"><span>VIMS GYM · 전문 상담</span><h2>다음 단계도 함께하세요.</h2><p>운동 자세 · 식단 · 회원 등록까지, 내 몸에 맞게 상담하세요.</p></div>
+  <div class="vk-ctabuttons"><a class="vk-primary" href="${TALK_URL}" target="_blank" rel="noopener noreferrer">상담 시작 <span>→</span></a><button type="button" class="vk-secondary" data-kiosk="finish">이용 종료</button></div>
+  <p class="vk-safe">이용 종료 시 입력한 정보가 초기화됩니다.</p>
+ </section>`;
 }
 function banner(){
-  return '<div class="vk-persistent" role="note"><span><b>공용 일회성 이용</b> · 개인 측정값은 저장하지 않습니다</span>'+
-    '<button type="button" data-kiosk="finish">이용 종료 · 초기화</button></div>';
+  return '<div class="vk-persistent" role="note"><span><b>일회성 이용</b> · 입력 정보는 저장되지 않습니다</span>'+
+    '<button type="button" data-kiosk="finish">이용 종료</button></div>';
 }
 function attach(){
   const root=document.querySelector('#view');
@@ -102,11 +101,11 @@ function attach(){
 function warn(){
   visibleWarning=true;
   const box=modalBox({
-   title:'이용을 계속하시겠습니까?',
-   message:'공용 기기에서 다음 사용자가 회원님의 결과를 볼 수 없도록 잠시 후 화면이 자동 초기화됩니다.',
-   body:'<div class="vk-warningcount"><b>45초 후 자동 종료</b><span>계속 보려면 아래 버튼을 눌러 주세요.</span></div>',
+   title:'계속 이용하시겠어요?',
+   message:'개인정보 보호를 위해 화면이 곧 초기화됩니다.',
+   body:'<div class="vk-warningcount"><b>45초 후 자동 종료</b><span>이용을 계속하려면 버튼을 눌러 주세요.</span></div>',
    actions:'<button type="button" class="vk-action-main" data-kiosk="continue">결과 계속 보기</button>'+
-           '<button type="button" class="vk-action-end" data-kiosk="finish">지금 종료 · 정보 지우기</button>'
+           '<button type="button" class="vk-action-end" data-kiosk="finish">지금 종료</button>'
   });
   warnTimer=setTimeout(finish,WARN_TIME);
 }
