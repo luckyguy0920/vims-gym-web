@@ -65,12 +65,13 @@ def index():
         '<script src="/autoflow.js?v=4"></script>'
         '<script src="/quickinbody.js?v=3"></script>'
         '<script src="/kiosk.js?v=4"></script>'
-        '<script src="/recipe-handoff.js?v=3"></script>'
+        '<script src="/recipe-handoff.js?v=4"></script>'
         '<script src="/branding.js?v=2"></script>'
         '<script src="/modern-ui.js?v=1"></script>'
         '<script src="/dark-ui.js?v=1"></script>'
         '<script src="/layout-polish.js?v=1"></script>'
         '<script src="/exercise-guide-bridge.js?v=1"></script>'
+        '<script src="/plan-image-export.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -277,6 +278,10 @@ def polished_layout_script():
 @app.get("/exercise-guide-bridge.js")
 def exercise_guide_bridge():
     return FileResponse(ROOT / "exercise-guide-bridge.js",media_type="application/javascript",headers={"Cache-Control":"no-store"})
+
+@app.get("/plan-image-export.js")
+def plan_image_export_script():
+    return FileResponse(ROOT / "plan-image-export.js", media_type="application/javascript", headers={"Cache-Control":"no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
