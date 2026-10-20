@@ -62,7 +62,7 @@ function consult(){
       '<div><span>현장 상담·회원 등록</span><strong>'+ADDRESS+'</strong><small>인바디 원본 결과지를 가져오시면 상담에 도움이 됩니다.</small></div>'+
       '<div class="vk-privacy">입력하신 측정값은 상담 요청과 함께 자동 전송되지 않습니다. 현장에서 필요할 때 직접 보여주세요.</div>'+
       '</div>',
-    actions:'<a class="vk-action-main" href="'+TALK_URL+'" target="_blank" rel="noopener noreferrer">네이버 톡톡으로 상담하기 ↗</a>'+
+    actions:'<a class="vk-action-main" href="'+TALK_URL+'" target="_blank" rel="noopener noreferrer">상담 시작 ↗</a>'+
       '<button type="button" class="vk-action-sub" data-kiosk="close">계획으로 돌아가기</button>'+
       '<button type="button" class="vk-action-end" data-kiosk="finish">이용 종료 · 정보 지우기</button>'
   });
@@ -71,7 +71,7 @@ function cta(){
   return `<section class="vk-sales" aria-label="전문 상담 및 회원 등록">
    <div class="vk-salesheader"><span>VIMS GYM · 맞춤 운동 관리</span><h2>계획을 세웠다면, 이제 나에게 맞게 실행할 차례입니다.</h2><p>회원님의 현재 몸 상태와 움직임, 운동 경험은 숫자만으로 모두 알 수 없습니다. 빔스짐 트레이너와 함께 운동·식사·회복 방법을 구체적으로 조정해 보세요.</p></div>
    <div class="vk-sellingpoints"><div><b>01</b> 운동 자세·기구 사용 상담</div><div><b>02</b> 체성분 목표에 따른 관리 방향</div><div><b>03</b> 개인지도 및 회원권 등록 안내</div></div>
-   <div class="vk-ctabuttons"><a class="vk-primary" href="${TALK_URL}" target="_blank" rel="noopener noreferrer">네이버 톡톡 · 상담 및 회원 등록 문의 <span>→</span></a><button type="button" class="vk-secondary" data-kiosk="finish">이용 종료 · 정보 지우기</button></div>
+   <div class="vk-ctabuttons"><a class="vk-primary" href="${TALK_URL}" target="_blank" rel="noopener noreferrer">상담 시작 <span>→</span></a><button type="button" class="vk-secondary" data-kiosk="finish">이용 종료 · 정보 지우기</button></div>
    <p class="vk-safe">이 결과는 이번 이용 중에만 표시됩니다. 공용 기기에 파일을 내려받거나 인쇄할 경우 개인 정보가 남을 수 있으니 주의하세요.</p>
   </section>`;
 }
@@ -133,7 +133,7 @@ const css=`
 .vk-sellingpoints b{color:#c9ee93;margin-right:8px}
 .vk-ctabuttons{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .vk-primary,.vk-secondary{border-radius:11px;padding:13px 16px;font-size:14px;font-weight:900;min-height:46px;text-decoration:none;cursor:pointer}
-.vk-primary{background:#c9f191;border:0;color:#21392a;display:flex;justify-content:space-between;gap:15px;align-items:center;flex:1;min-width:230px}
+.vk-primary{background:#FF7A00;border:0;color:#fff;display:flex;justify-content:center;gap:10px;align-items:center;flex:1;min-width:180px;font-size:16px;box-shadow:0 10px 24px rgba(255,122,0,.21)}.vk-primary:hover{background:#F06D00}
 .vk-primary span{font-size:20px}.vk-secondary{color:#fff;border:1px solid #ffffff74;background:transparent}
 .vk-sales .vk-safe{font-size:11px;color:#b2c7df;margin-top:16px}
 .vk-modalshade{position:fixed;z-index:100000;inset:0;background:rgba(7,17,31,.73);display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
@@ -149,7 +149,7 @@ const css=`
 .vk-contactdetails .vk-privacy{background:#f7f9ec;font-size:12px;color:#65714a;line-height:1.7}
 .vk-modalactions{display:flex;flex-direction:column;gap:8px;margin-top:17px}
 .vk-action-main,.vk-action-sub,.vk-action-end{text-align:center;border-radius:10px;display:block;padding:12px 14px;font-size:14px;font-weight:900;cursor:pointer;text-decoration:none}
-.vk-action-main{background:#2561bf;color:#fff;border:1px solid #2561bf}.vk-action-sub{background:#f2f6fb;color:#376090;border:1px solid #dce5f0}
+.vk-action-main{background:#2561bf;color:#fff;border:1px solid #2561bf}.vk-action-main[href]{background:#FF7A00;color:#fff;border-color:#FF7A00;font-size:16px}.vk-action-main[href]:hover{background:#F06D00}.vk-action-sub{background:#f2f6fb;color:#376090;border:1px solid #dce5f0}
 .vk-action-end{background:#fff;color:#955337;border:1px solid #efddd0}
 .vk-warningcount{background:#fff6e8;padding:13px;border-radius:10px;margin-top:13px}
 .vk-warningcount b,.vk-warningcount span{display:block;font-size:12px;color:#916630;line-height:1.8}
