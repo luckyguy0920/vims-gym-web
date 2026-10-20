@@ -1,8 +1,7 @@
 
 (function(){
 'use strict';
-const PHONE='050713668163';
-const PHONE_TEXT='0507-1366-8163';
+const TALK_URL='https://talk.naver.com/ct/w81ur3w?frm=mnmb#nafullscreen';
 const ADDRESS='울산광역시 울주군 범서읍 구영로 94, 5층';
 const CLOSED_KEYS=['vims28_member_preview_1','vims_integrated_recipe_v7','vims28_manual_measurements_v1'];
 const IDLE_TIME=8*60*1000;
@@ -59,11 +58,11 @@ function consult(){
     title:'내 몸에 맞는 관리, 전문가와 함께 시작하세요',
     message:'자동 계획은 시작점입니다. 빔스짐에서 운동 목표와 기구 사용, 체형·움직임 상태를 상담하고 회원 등록 방법도 안내받으실 수 있습니다.',
     body:'<div class="vk-contactdetails">'+
-      '<div><span>상담 문의</span><strong>'+PHONE_TEXT+'</strong><small>공개 업체정보에 기재된 번호 · 센터 확인 권장</small></div>'+
+      '<div><span>상담 문의</span><strong>네이버 톡톡으로 문의</strong><small>빔스짐 상담 채널에서 질문과 등록 상담을 진행하세요.</small></div>'+
       '<div><span>현장 상담·회원 등록</span><strong>'+ADDRESS+'</strong><small>인바디 원본 결과지를 가져오시면 상담에 도움이 됩니다.</small></div>'+
       '<div class="vk-privacy">입력하신 측정값은 상담 요청과 함께 자동 전송되지 않습니다. 현장에서 필요할 때 직접 보여주세요.</div>'+
       '</div>',
-    actions:'<a class="vk-action-main" href="tel:'+PHONE+'">전화로 상담 문의하기 ↗</a>'+
+    actions:'<a class="vk-action-main" href="'+TALK_URL+'" target="_blank" rel="noopener noreferrer">네이버 톡톡으로 상담하기 ↗</a>'+
       '<button type="button" class="vk-action-sub" data-kiosk="close">계획으로 돌아가기</button>'+
       '<button type="button" class="vk-action-end" data-kiosk="finish">이용 종료 · 정보 지우기</button>'
   });
@@ -72,7 +71,7 @@ function cta(){
   return `<section class="vk-sales" aria-label="전문 상담 및 회원 등록">
    <div class="vk-salesheader"><span>VIMS GYM · 맞춤 운동 관리</span><h2>계획을 세웠다면, 이제 나에게 맞게 실행할 차례입니다.</h2><p>회원님의 현재 몸 상태와 움직임, 운동 경험은 숫자만으로 모두 알 수 없습니다. 빔스짐 트레이너와 함께 운동·식사·회복 방법을 구체적으로 조정해 보세요.</p></div>
    <div class="vk-sellingpoints"><div><b>01</b> 운동 자세·기구 사용 상담</div><div><b>02</b> 체성분 목표에 따른 관리 방향</div><div><b>03</b> 개인지도 및 회원권 등록 안내</div></div>
-   <div class="vk-ctabuttons"><button type="button" class="vk-primary" data-kiosk="consult">1:1 전문 상담 · 회원 등록 문의 <span>→</span></button><button type="button" class="vk-secondary" data-kiosk="finish">이용 종료 · 정보 지우기</button></div>
+   <div class="vk-ctabuttons"><a class="vk-primary" href="${TALK_URL}" target="_blank" rel="noopener noreferrer">네이버 톡톡 · 상담 및 회원 등록 문의 <span>→</span></a><button type="button" class="vk-secondary" data-kiosk="finish">이용 종료 · 정보 지우기</button></div>
    <p class="vk-safe">이 결과는 이번 이용 중에만 표시됩니다. 공용 기기에 파일을 내려받거나 인쇄할 경우 개인 정보가 남을 수 있으니 주의하세요.</p>
   </section>`;
 }
@@ -133,7 +132,7 @@ const css=`
 .vk-sellingpoints>div{background:#ffffff12;border:1px solid #ffffff23;padding:12px;border-radius:11px;font-size:12px;color:#e4edff;line-height:1.6}
 .vk-sellingpoints b{color:#c9ee93;margin-right:8px}
 .vk-ctabuttons{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.vk-primary,.vk-secondary{border-radius:11px;padding:13px 16px;font-size:14px;font-weight:900;min-height:46px}
+.vk-primary,.vk-secondary{border-radius:11px;padding:13px 16px;font-size:14px;font-weight:900;min-height:46px;text-decoration:none;cursor:pointer}
 .vk-primary{background:#c9f191;border:0;color:#21392a;display:flex;justify-content:space-between;gap:15px;align-items:center;flex:1;min-width:230px}
 .vk-primary span{font-size:20px}.vk-secondary{color:#fff;border:1px solid #ffffff74;background:transparent}
 .vk-sales .vk-safe{font-size:11px;color:#b2c7df;margin-top:16px}
