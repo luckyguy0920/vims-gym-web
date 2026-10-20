@@ -3,7 +3,7 @@ const style=document.createElement('style');
 style.id='vims-layout-polish';
 style.textContent=css;
 document.head.appendChild(style);
-const isInput=el=>Boolean(el&&el.matches?.('input,textarea,select,[contenteditable="true"]'));
+const isInput=el=>Boolean(el&&el.matches?.('textarea,select,[contenteditable="true"],input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="button"]):not([type="hidden"])'));
 function measureNav(){
  const nav=document.querySelector('#mobileNav');
  const height=nav&&getComputedStyle(nav).display!=='none'?Math.ceil(nav.getBoundingClientRect().height):0;
