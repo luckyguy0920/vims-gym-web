@@ -38,7 +38,7 @@ def index():
         '<script src="/plan28.js?v=1"></script>'
         '<script src="/autoflow.js?v=1"></script>'
         '<script src="/quickinbody.js?v=2"></script>'
-        '<script src="/kiosk.js?v=1"></script>'
+        '<script src="/kiosk.js?v=2"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
