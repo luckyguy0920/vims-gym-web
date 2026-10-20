@@ -1,10 +1,8 @@
 """VIMS GYM lightweight browser-local InBody entry and planning frontend."""
 from pathlib import Path
-import base64, io, json, secrets, threading, time
-import qrcode
-import qrcode.image.svg
+import base64, json, os, secrets, threading, time
 from fastapi import FastAPI, HTTPException, Body, Request
-from fastapi.responses import HTMLResponse, FileResponse, Response
+from fastapi.responses import HTMLResponse, FileResponse, Response, JSONResponse
 
 ROOT = Path(__file__).resolve().parent
 app = FastAPI(title="VIMS GYM Manual InBody")
@@ -207,6 +205,16 @@ def recipe_image(recipe_id:int):
     raw=base64.b64decode(encoded.split(",",1)[1],validate=True)
     return Response(content=raw,media_type="image/webp",headers={"Cache-Control":"public, max-age=604800"})
 
+@app.get("/api/kakao-share-config")
+def kakao_share_config():
+    # JavaScript app keys are public SDK identifiers, not an admin key or REST secret.
+    # Without the optional key, the UI uses the device's native sharing panel.
+    key=os.getenv("VIMS_KAKAO_JS_KEY","").strip()
+    if len(key)>128:key=""
+    return JSONResponse({"enabled":bool(key),"javascriptKey":key},headers={
+        "Cache-Control":"no-store","Referrer-Policy":"no-referrer","X-Content-Type-Options":"nosniff"
+    })
+
 @app.post("/api/handoff")
 def handoff_plan(payload:dict=Body(...)):
     raw=json.dumps(payload,ensure_ascii=False,separators=(",",":")).encode("utf-8")
@@ -218,11 +226,12 @@ def handoff_plan(payload:dict=Body(...)):
         if len(_TRANSFERS)>=_TRANSFER_LIMIT:
             raise HTTPException(429,"현재 접속자가 많습니다. 잠시 후 다시 시도해 주세요.")
         _TRANSFERS[token]={"expires":time.time()+_TRANSFER_LIFETIME,"plan":plan}
+    # Fragment secrets are not sent to this server by browser page requests.
+    # The message itself contains NO measurements, name, number or plan details.
     url="https://vims-gym-web.onrender.com/receive#code="+token
-    image=qrcode.make(url,image_factory=qrcode.image.svg.SvgPathImage,box_size=7,border=3)
-    stream=io.BytesIO();image.save(stream)
-    svg=base64.b64encode(stream.getvalue()).decode("ascii")
-    return {"qr":"data:image/svg+xml;base64,"+svg,"ttlSeconds":_TRANSFER_LIFETIME}
+    return JSONResponse({"url":url,"ttlSeconds":_TRANSFER_LIFETIME},headers={
+        "Cache-Control":"no-store","Referrer-Policy":"no-referrer","X-Content-Type-Options":"nosniff"
+    })
 
 @app.post("/api/handoff/redeem")
 def redeem_plan(request:dict=Body(...)):
@@ -235,7 +244,7 @@ def redeem_plan(request:dict=Body(...)):
         _prune_transfers()
         entry=_TRANSFERS.pop(code,None)
     if not entry:raise HTTPException(410,"일회용 코드가 만료됐거나 이미 사용됐습니다. 공용 화면에서 다시 생성해 주세요.")
-    return entry["plan"]
+    return JSONResponse(entry["plan"],headers={"Cache-Control":"no-store","Referrer-Policy":"no-referrer"})
 
 @app.get("/recipe-handoff.js")
 def recipe_handoff_script():
