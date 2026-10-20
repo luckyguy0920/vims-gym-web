@@ -38,11 +38,11 @@ def index():
     html = html.replace("<script>\n'use strict';", bootstrap + "<script>\n'use strict';", 1)
     scripts = (
         '<script src="/nutrition.js?v=2"></script>'
-        '<script src="/plan28.js?v=1"></script>'
-        '<script src="/autoflow.js?v=1"></script>'
-        '<script src="/quickinbody.js?v=2"></script>'
-        '<script src="/kiosk.js?v=2"></script>'
-        '<script src="/recipe-handoff.js?v=2"></script>'
+        '<script src="/plan28.js?v=3"></script>'
+        '<script src="/autoflow.js?v=3"></script>'
+        '<script src="/quickinbody.js?v=3"></script>'
+        '<script src="/kiosk.js?v=3"></script>'
+        '<script src="/recipe-handoff.js?v=3"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
