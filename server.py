@@ -42,6 +42,7 @@ def index():
         '<script src="/autoflow.js?v=1"></script>'
         '<script src="/quickinbody.js?v=2"></script>'
         '<script src="/kiosk.js?v=2"></script>'
+        '<script src="/recipe-handoff.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -205,6 +206,10 @@ def redeem_plan(request:dict=Body(...)):
         entry=_TRANSFERS.pop(code,None)
     if not entry:raise HTTPException(410,"일회용 코드가 만료됐거나 이미 사용됐습니다. 공용 화면에서 다시 생성해 주세요.")
     return entry["plan"]
+
+@app.get("/recipe-handoff.js")
+def recipe_handoff_script():
+    return FileResponse(ROOT/"recipe-handoff.js",media_type="application/javascript",headers={"Cache-Control":"no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
