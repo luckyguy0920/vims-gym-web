@@ -68,7 +68,7 @@ function afHome(){
    <section class="af-dcard"><div class="af-cardtitle"><span>02</span><h4>운동</h4></div>${ex}<div class="af-dfoot">유산소 ${p.s.cardio}분 · ${p.s.training?`세트간 ${p.s.wt.rest} 휴식`:'회복 중심 활동'}</div><button class="af-textbutton" data-action="route" data-value="workout">운동 보기 →</button></section>
    <section class="af-dcard"><div class="af-cardtitle"><span>03</span><h4>휴식</h4></div><div class="af-rest"><b>${p.s.training?'운동 후 회복':'회복일'}</b><p>수면 ${Number(state.profile?.age)>=65?'7~8시간':'7~9시간'} 확보, 충분한 수분과 무리하지 않는 활동을 기본으로 합니다.</p></div><div class="af-dfoot">실천 ${countHabits(day)} / 4</div><button class="af-textbutton" data-action="route" data-value="diet">기록하기 →</button></section>
   </div></div>
-  <div class="af-shortcuts"><button data-action="route" data-value="plan"><b>▦</b><span>28일 계획</span></button><button data-action="route" data-value="nutrition"><b>◫</b><span>맞춤 식단</span></button><button data-action="route" data-value="workout"><b>◉</b><span>운동 루틴</span></button><button data-action="route" data-value="recipes"><b>♨</b><span>레시피</span></button></div>
+  <div class="af-shortcuts" aria-label="바로가기"><button type="button" data-action="route" data-value="recipes"><b>♨</b><span>레시피 보기</span></button><button type="button" data-action="route" data-value="diet"><b>✎</b><span>오늘의 기록</span></button></div>
   <div class="af-safety">예상 열량과 운동량은 참고용입니다. 건강 상태에 따라 전문가의 확인이 필요합니다.</div>
   </div>`;
 }
@@ -118,7 +118,7 @@ navRender=function(){
  baseNavRender();
  const mobile=document.querySelector('#mobileNav');
  if(mobile){
-  const list=[['home','⌂','홈'],['body','▣','인바디'],['plan','▦','28일'],['nutrition','◫','식단'],['diet','✎','기록']];
+  const list=[['home','⌂','홈'],['body','▣','인바디'],['plan','▦','28일'],['nutrition','◫','식단'],['workout','◉','운동']];
   mobile.innerHTML=list.map(([id,ico,label])=>`<button type="button" data-action="route" data-value="${id}" class="${route===id?'active':''}"><span>${ico}</span><span>${label}</span></button>`).join('');
  }
 };
