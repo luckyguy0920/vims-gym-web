@@ -184,7 +184,7 @@ function page(){
  c.notes.map(m=>'<div>• '+clean(m)+'</div>').join('')+'</div>';
  for(let w=0;w<4;w++){
   const wk=weekText[w],targets=weekTargets(w);
-  html+='<div class="v28week"><h3>'+(w+1)+'주차 · '+wk[0]+'</h3><p>'+wk[1]+'</p></div><div class="v28weekbar"><span>근력 주 '+sessionDays(w).length+'회</span><span>유산소 '+targets.mins+'분/주</span><span>'+targets.sets+'세트 · '+targets.reps+'</span></div><div class="v28days">';
+  html+='<details class="v28weekpanel"'+(w===0?' open':'')+'><summary class="v28weeksummary"><div class="v28week"><h3>'+(w+1)+'주차 · '+wk[0]+'</h3><p>'+wk[1]+'</p></div><span class="v28chevron" aria-hidden="true">⌄</span></summary><div class="v28weekbar"><span>근력 주 '+sessionDays(w).length+'회</span><span>유산소 '+targets.mins+'분/주</span><span>'+targets.sets+'세트 · '+targets.reps+'</span></div><div class="v28days">';
   for(let day=w*7+1;day<=w*7+7;day++){
    const v=daily(day,c),s=v.s;
    const menu=v.meals.map(m=>'<div><strong>'+groups[m.type]+'</strong> '+clean(m.title)+(c.kcal==null?'':' <small>약 '+money(m.kcal)+' kcal</small>')+'</div>').join('');
@@ -197,7 +197,7 @@ function page(){
    '<details><summary>식재료 보기</summary>'+portion+'<div class="v28detail">식이섬유 '+money(v.sum.fiber)+' g</div></details>'+
    '<button class="btn ghost small" style="margin-top:10px" data-action="day-diet" data-value="'+day+'">DAY '+day+' 식사·운동 기록 →</button></article>';
   }
-  html+='</div>';
+  html+='</div></details>';
  }
  return html+'<div class="v28actions"><button class="btn primary" data-action="route" data-value="body">설정 수정</button><button class="btn ghost" data-action="route" data-value="nutrition">식단 보기</button></div>'+
  '<div class="v28warn"><b>이용 안내</b><p>성인용 참고 계획입니다. 열량은 추정치이며, 질환·알레르기·임신·부상 등은 전문가와 별도 확인이 필요합니다.</p></div></div>';
