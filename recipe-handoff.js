@@ -73,7 +73,7 @@ function handoffData(){
 function shareBanner(){
  return `<section class="vr-share" aria-label="28일 계획과 레시피를 휴대전화로 전달">
  <div class="vr-text"><span>28일 식단 · 레시피 · 운동 · 휴식</span><h2>계획표를 내 휴대전화로 가져가세요.</h2>
- <p>음식 사진과 조리법, 매 끼니 재료 중량까지 함께 전달합니다. 공용 기기에는 계획을 저장하지 않고, 회원 휴대전화에서만 보관 여부를 선택합니다.</p>
+ <p>음식 사진과 조리법, 매 끼니 재료 중량까지 함께 전달합니다. 공용 기기에는 계획을 저장하지 않습니다. 선택 시 계산된 계획만 서버 메모리에 최대 10분 임시 보관하며, 개인 휴대전화에서 보관 여부를 결정합니다.</p>
  <small>원본 인바디 수치와 성명은 전송하지 않습니다. 일회용 큐알코드는 10분 동안만 사용할 수 있습니다.</small>
  </div><button type="button" class="vr-sharebtn" data-vr-share="1">큐알코드로 계획 가져가기 <span>→</span></button>
  </section>`;
@@ -116,6 +116,7 @@ function closeQr(){
 async function makeQR(){
  if(loading)return;
  const data=handoffData();if(!data)return;
+ if(!window.confirm('원본 인바디 측정값과 이름을 제외한 28일 식사·운동·휴식 계획을 서버에 최대 10분간 임시 보관합니다. 큐알코드 생성 후 휴대전화가 한 번 가져가면 서버의 해당 정보는 삭제됩니다. 계속하시겠습니까?'))return;
  loading=true;
  closeQr();
  const overlay=document.createElement('div');overlay.id='vr-qr';overlay.className='vr-overlay';
