@@ -63,14 +63,15 @@ def index():
     html = html.replace("</head>", '<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2"/></head>', 1)
     scripts = (
         '<script src="/nutrition.js?v=2"></script>'
-        '<script src="/plan28.js?v=3"></script>'
-        '<script src="/autoflow.js?v=3"></script>'
+        '<script src="/plan28.js?v=4"></script>'
+        '<script src="/autoflow.js?v=4"></script>'
         '<script src="/quickinbody.js?v=3"></script>'
         '<script src="/kiosk.js?v=4"></script>'
         '<script src="/recipe-handoff.js?v=3"></script>'
         '<script src="/branding.js?v=2"></script>'
         '<script src="/modern-ui.js?v=1"></script>'
         '<script src="/dark-ui.js?v=1"></script>'
+        '<script src="/layout-polish.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -258,6 +259,10 @@ def modern_ui_script():
 @app.get("/dark-ui.js")
 def dark_ui_script():
     return FileResponse(ROOT / "dark-ui.js", media_type="application/javascript", headers={"Cache-Control":"no-store"})
+
+@app.get("/layout-polish.js")
+def polished_layout_script():
+    return FileResponse(ROOT / "layout-polish.js",media_type="application/javascript",headers={"Cache-Control":"no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
