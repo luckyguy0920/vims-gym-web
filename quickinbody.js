@@ -129,7 +129,8 @@ function qPage(){
   <p class="qf-caution">기본 목표는 체성분 개선입니다. 입력한 나이·성별 계수·평소 활동량을 기초대사량 추정에 반영합니다. 이 계수만으로 개인의 실제 신체 특성을 완전히 판단할 수는 없습니다.</p>
   <div class="qf-error" id="qf-error" role="alert" aria-live="polite"></div>
   <button type="submit" class="qf-submit" id="qf-submit">28일 식사·운동·휴식 결과 보기 <span>→</span></button>
-  <p class="qf-privacy">이 페이지는 공용 이용용입니다. 결과는 이번 이용 중에만 표시되고, 이용 종료 또는 새로고침 시 삭제됩니다. 실제 건강 상담에는 원본 결과지를 지참해 주세요.</p>
+  <p class="qf-privacy">이 페이지는 공용 이용용입니다. 측정값과 개인 특성은 이번 이용 중에만 표시되고, 이용 종료 또는 새로고침 시 삭제됩니다. 실제 상담에는 원본 결과지를 지참해 주세요.</p>
+  <p class="qf-care">알레르기·질환·임신·수유·부상 등 개별 관리가 필요하다면 <a href="https://talk.naver.com/ct/w81ur3w?frm=mnmb#nafullscreen" target="_blank" rel="noopener noreferrer">네이버 톡톡으로 전문가 상담 문의하기 →</a></p>
  </form>
  `;
 }
@@ -143,6 +144,7 @@ function qSave(){
  const profile=qProfileFromForm();
  const errors=qProfileErrors(profile);
  if(errors.length){qError(errors.join(' '));return;}
+ if(p.bmi<18.5||p.bmi>=40){qError('현재 체질량지수에서는 개인별 영양·운동 평가가 필요합니다. 네이버 톡톡 상담을 이용해 주세요.');return;}
  if(qGoal==='fat'&&p.bmi<20.5){qError('체질량지수가 낮은 범위에서는 자동 감량 계획을 제시하지 않습니다. 다른 목표를 선택해 주세요.');return;}
  const oldBody={...state.body};
  const oldGoal={...state.goal};
@@ -190,6 +192,7 @@ const profileCss=`
 .qf-profilefield select,.qf-profilefield input{width:100%;min-height:50px;padding:10px 12px;background:#f7faff;border:1.5px solid #d8e2f0;color:#223e61;font-size:14px;border-radius:11px}
 .qf-profilefield select:focus,.qf-profilefield input:focus{outline:none;border-color:#366ac9}
 .qf-profilefield small{font-size:11px;color:#8192a5;line-height:1.6;font-weight:500}
+.qf-care{font-size:12px;color:#546b87;line-height:1.8;background:#f2f7ff;border-radius:10px;padding:12px}.qf-care a{color:#245fc0;font-weight:900;text-decoration:underline}
 @media(max-width:680px){.qf-profilegrid{grid-template-columns:1fr}}
 `;
 const style=document.createElement('style');style.textContent=css+profileCss;document.head.appendChild(style);
