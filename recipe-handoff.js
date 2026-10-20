@@ -30,16 +30,16 @@ function recipeWindow(day,type){
  const example=recipes.find(r=>r.id===id);
  document.getElementById('vr-modal')?.remove();
  const shadow=document.createElement('div');shadow.id='vr-modal';shadow.className='vr-overlay';
- const source=example?`<section class="vr-reference"><h3>참고 레시피 · ${esc(example.name)}</h3>
+ const source=example?`<section class="vr-reference"><h3>참고 조리법 · ${esc(example.name)}</h3>
  <img src="${example.img}" alt="${esc(example.name)} 참고 레시피 사진" loading="lazy">
- <p class="vr-caution"><b>사진·조리법 참고용</b> · 기존 레시피북의 비슷한 요리입니다. 위 계획 메뉴와 재료·조리법이 완전히 같지 않을 수 있으므로, 식사 분량은 반드시 위의 계획표를 우선해 주세요.</p>
+ <p class="vr-caution"><b>참고 조리법</b> · 비슷한 메뉴의 조리 예시입니다. 식재료와 중량은 위 계획을 우선하세요.</p>
  <h4>조리 순서</h4><ol>${example.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
- ${example.tips?.length?`<h4>참고 조리 팁</h4><ul>${example.tips.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</section>`:
- `<p>연결할 수 있는 기존 레시피가 없어 식재료와 중량을 기준으로 조리해야 합니다. 신선한 재료를 사용하고 익혀야 하는 재료는 충분히 가열해 주세요.</p>`;
+ ${example.tips?.length?`<h4>조리 팁</h4><ul>${example.tips.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</section>`:
+ `<p>기존 레시피가 없어 재료·중량만 제공합니다. 충분히 익혀 조리하세요.</p>`;
  shadow.innerHTML=`<div class="vr-dialog" role="dialog" aria-modal="true" aria-label="${day}일차 ${labels[type]} 레시피">
  <header><div><span>DAY ${String(day).padStart(2,'0')} · ${labels[type]}</span><h2>${esc(m.title)}</h2></div><button type="button" data-recipe-close="1">닫기 ×</button></header>
- <p class="vr-headline">나의 계획에 맞는 식재료 분량 · 약 ${fmt(m.kcal)}킬로칼로리 · 단백질 ${fmt(m.p)}g</p>
- <h3>계획표의 재료와 중량</h3><div class="vr-ingredients">${ingredientRows(m)}</div>${source}</div>`;
+ <p class="vr-headline">재료와 중량 · 약 ${fmt(m.kcal)}킬로칼로리 · 단백질 ${fmt(m.p)}g</p>
+ <h3>식재료 · 중량</h3><div class="vr-ingredients">${ingredientRows(m)}</div>${source}</div>`;
  document.body.appendChild(shadow);
  document.body.style.overflow='hidden';
 }
@@ -72,10 +72,10 @@ function handoffData(){
 }
 function shareBanner(){
  return `<section class="vr-share" aria-label="28일 계획과 레시피를 휴대전화로 전달">
- <div class="vr-text"><span>28일 식단 · 레시피 · 운동 · 휴식</span><h2>계획표를 내 휴대전화로 가져가세요.</h2>
- <p>음식 사진과 조리법, 매 끼니 재료 중량까지 함께 전달합니다. 공용 기기에는 계획을 저장하지 않습니다. 선택 시 계산된 계획만 서버 메모리에 최대 10분 임시 보관하며, 개인 휴대전화에서 보관 여부를 결정합니다.</p>
- <small>원본 인바디 수치와 성명은 전송하지 않습니다. 일회용 큐알코드는 10분 동안만 사용할 수 있습니다.</small>
- </div><button type="button" class="vr-sharebtn" data-vr-share="1">큐알코드로 계획 가져가기 <span>→</span></button>
+ <div class="vr-text"><span>28일 계획 · 레시피</span><h2>휴대전화에서도 이어보기</h2>
+ <p>식단 · 운동 · 휴식과 레시피를 휴대전화로 가져갑니다.</p>
+ <small>원본 인바디·이름 미전송 · 일회용 코드 10분 유효</small>
+ </div><button type="button" class="vr-sharebtn" data-vr-share="1">내 폰으로 가져가기 <span>→</span></button>
  </section>`;
 }
 function enhanceMeals(){
@@ -92,8 +92,8 @@ function enhanceMeals(){
    const id=refId(day,m.type),example=recipes.find(r=>r.id===id);
    return `<div class="vr-menurow">
     ${example?`<img src="/api/recipe/${id}/image" alt="${esc(example.name)} 참고 음식 사진" loading="lazy">`:'<span class="vr-emptyphoto">♨</span>'}
-    <span class="vr-menutext"><small>${labels[m.type]}</small><b>${esc(m.title)}</b><em>약 ${fmt(m.kcal)}킬로칼로리 · ${example?'사진은 비슷한 참고 메뉴':'조리법 확인'}</em></span>
-    <button type="button" data-vr-meal="${day}:${m.type}">레시피 보기</button>
+    <span class="vr-menutext"><small>${labels[m.type]}</small><b>${esc(m.title)}</b><em>약 ${fmt(m.kcal)}킬로칼로리 · ${example?'참고 사진':'조리법 확인'}</em></span>
+    <button type="button" data-vr-meal="${day}:${m.type}">조리법</button>
    </div>`;
   }).join('');
  });
@@ -116,13 +116,13 @@ function closeQr(){
 async function makeQR(){
  if(loading)return;
  const data=handoffData();if(!data)return;
- if(!window.confirm('원본 인바디 측정값과 이름을 제외한 28일 식사·운동·휴식 계획을 서버에 최대 10분간 임시 보관합니다. 큐알코드 생성 후 휴대전화가 한 번 가져가면 서버의 해당 정보는 삭제됩니다. 계속하시겠습니까?'))return;
+ if(!window.confirm('원본 인바디·이름을 제외한 28일 계획을 서버에 최대 10분간 임시 보관합니다. 휴대전화에서 가져가면 즉시 삭제됩니다. 계속할까요?'))return;
  loading=true;
  closeQr();
  const overlay=document.createElement('div');overlay.id='vr-qr';overlay.className='vr-overlay';
- overlay.innerHTML=`<div class="vr-dialog vr-qr-dialog" role="dialog" aria-modal="true" aria-label="내 휴대전화로 28일 계획 가져가기">
- <header><h2>내 휴대전화로 가져가기</h2><button data-vr-closeqr="1">닫기 ×</button></header>
- <div class="vr-qrcontent"><p>일회용 큐알코드를 만들고 있습니다…</p></div></div>`;
+ overlay.innerHTML=`<div class="vr-dialog vr-qr-dialog" role="dialog" aria-modal="true" aria-label="휴대전화로 계획 가져가기">
+ <header><h2>휴대전화로 가져가기</h2><button data-vr-closeqr="1">닫기 ×</button></header>
+ <div class="vr-qrcontent"><p>코드를 만들고 있습니다…</p></div></div>`;
  document.body.appendChild(overlay);document.body.style.overflow='hidden';
  try{
   const r=await fetch('/api/handoff',{
@@ -132,10 +132,10 @@ async function makeQR(){
   const j=await r.json();
   if(!r.ok)throw Error(typeof j.detail==='string'?j.detail:'일회용 코드를 만들지 못했습니다.');
   const node=overlay.querySelector('.vr-qrcontent');
-  if(node)node.innerHTML=`<p>휴대전화 카메라로 아래 코드를 스캔하세요. 앱 설치 없이 28일 식단과 레시피를 가져올 수 있습니다.</p>
+  if(node)node.innerHTML=`<p>휴대전화로 코드를 스캔하세요.</p>
   <div class="vr-qrimage"><img src="${j.qr}" alt="개인 휴대전화용 28일 계획 일회용 큐알코드"></div>
-  <div class="vr-qrsteps"><div><b>1</b> 내 휴대전화로 큐알코드 스캔</div><div><b>2</b> 개인 계획표 화면 확인</div><div><b>3</b> 본인 휴대전화일 때만 보관에 동의</div></div>
-  <p class="vr-qrwarning">10분 후 만료 · 최초 1회만 사용 가능 · 공유 링크에 이름이나 인바디 수치가 포함되지 않습니다. 새로고침하거나 이용을 종료하면 이 공용 화면의 큐알코드는 사라집니다.</p>`;
+  <div class="vr-qrsteps"><div><b>1</b> 휴대전화로 스캔</div><div><b>2</b> 28일 계획 확인</div><div><b>3</b> 내 기기에만 저장</div></div>
+  <p class="vr-qrwarning">10분 유효 · 1회 사용 · 원본 인바디 정보 미포함</p>`;
  }catch(e){
   const node=overlay.querySelector('.vr-qrcontent');
   if(node)node.innerHTML='<p class="vr-error">'+esc(e.message||'현재 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.')+'</p><button class="vr-sharebtn" data-vr-closeqr="1">닫기</button>';
