@@ -11,7 +11,6 @@ const refMap={
 };
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString('ko-KR');
-let loading=false;
 function refId(day,type){
  const offset=(day-1+Math.floor((day-1)/7)*2)%7;
  return refMap[type]?.[offset]||null;
@@ -71,12 +70,12 @@ function handoffData(){
  return {version:1,kind:state.goal.kind,goal:goalLabel(),kcal:n.kcal,protein:n.protein,days};
 }
 function shareBanner(){
- return `<section class="vr-share" aria-label="28일 계획과 레시피를 휴대전화로 전달">
- <div class="vr-text"><span>28일 계획 · 레시피</span><h2>휴대전화에서도 이어보기</h2>
- <p>식단 · 운동 · 휴식과 레시피를 휴대전화로 가져갑니다.</p>
- <small>원본 인바디·이름 미전송 · 일회용 코드 10분 유효</small>
- </div><button type="button" class="vr-sharebtn" data-vr-share="1">내 폰으로 가져가기 <span>→</span></button>
- </section>`;
+ return `<section class="vr-share" aria-label="28일 맞춤 계획표 이미지 저장">
+  <div class="vr-text"><span>VIMS GYM · 28일 관리</span><h2>내 계획표 저장하기</h2>
+  <p>오늘 계획 1장과 1~4주차 계획 4장, 총 5장의 사진을 한 번에 저장합니다.</p>
+  <small>PNG 5장을 ZIP 파일 하나로 · 이름·전화번호·원본 인바디 수치 제외</small>
+  </div><button type="button" class="vr-sharebtn" data-vims-save-all="1">28일 맞춤 계획표 저장하기 <span>↓</span></button>
+  </section>`;
 }
 function enhanceMeals(){
  if(route!=='plan')return;
@@ -109,38 +108,6 @@ function attach(){
  if(consultation)consultation.before(c);
  else view.appendChild(c);
 }
-function closeQr(){
- document.getElementById('vr-qr')?.remove();
- if(!document.getElementById('vr-modal')&&!document.getElementById('vims-kiosk-modal'))document.body.style.overflow='';
-}
-async function makeQR(){
- if(loading)return;
- const data=handoffData();if(!data)return;
- if(!window.confirm('원본 인바디·이름을 제외한 28일 계획을 서버에 최대 10분간 임시 보관합니다. 휴대전화에서 가져가면 즉시 삭제됩니다. 계속할까요?'))return;
- loading=true;
- closeQr();
- const overlay=document.createElement('div');overlay.id='vr-qr';overlay.className='vr-overlay';
- overlay.innerHTML=`<div class="vr-dialog vr-qr-dialog" role="dialog" aria-modal="true" aria-label="휴대전화로 계획 가져가기">
- <header><h2>휴대전화로 가져가기</h2><button data-vr-closeqr="1">닫기 ×</button></header>
- <div class="vr-qrcontent"><p>코드를 만들고 있습니다…</p></div></div>`;
- document.body.appendChild(overlay);document.body.style.overflow='hidden';
- try{
-  const r=await fetch('/api/handoff',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data),cache:'no-store'
-  });
-  const j=await r.json();
-  if(!r.ok)throw Error(typeof j.detail==='string'?j.detail:'일회용 코드를 만들지 못했습니다.');
-  const node=overlay.querySelector('.vr-qrcontent');
-  if(node)node.innerHTML=`<p>휴대전화로 코드를 스캔하세요.</p>
-  <div class="vr-qrimage"><img src="${j.qr}" alt="개인 휴대전화용 28일 계획 일회용 큐알코드"></div>
-  <div class="vr-qrsteps"><div><b>1</b> 휴대전화로 스캔</div><div><b>2</b> 28일 계획 확인</div><div><b>3</b> 내 기기에만 저장</div></div>
-  <p class="vr-qrwarning">10분 유효 · 1회 사용 · 원본 인바디 정보 미포함</p>`;
- }catch(e){
-  const node=overlay.querySelector('.vr-qrcontent');
-  if(node)node.innerHTML='<p class="vr-error">'+esc(e.message||'현재 연결할 수 없습니다. 잠시 후 다시 시도해 주세요.')+'</p><button class="vr-sharebtn" data-vr-closeqr="1">닫기</button>';
- }finally{loading=false;}
-}
 const styles=`
 .vr-share{margin:23px 0 16px;border-radius:19px;padding:22px;background:linear-gradient(125deg,#e6f0ff,#f5f9ff);border:1px solid #d5e4f8;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
 .vr-text{flex:1;min-width:220px}.vr-text>span{font-size:11px;font-weight:900;letter-spacing:.08em;color:#2b5eb3}.vr-text h2{font-size:22px;margin:8px 0;color:#1a3862}.vr-text p{font-size:13px;color:#4b6487;line-height:1.8;margin:0 0 9px;max-width:660px}.vr-text small{font-size:11px;color:#7186a0;line-height:1.7}
@@ -172,12 +139,9 @@ document.addEventListener('click',function(e){
  if(r){e.preventDefault();e.stopPropagation();const [day,type]=r.dataset.vrMeal.split(':');recipeWindow(Number(day),type);return;}
  const x=e.target.closest('[data-recipe-close]');
  if(x){e.preventDefault();closeRecipe();return;}
- const q=e.target.closest('[data-vr-share]');
- if(q){e.preventDefault();makeQR();return;}
- const c=e.target.closest('[data-vr-closeqr]');
- if(c){e.preventDefault();closeQr();}
+
 },true);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeRecipe();closeQr();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRecipe();});
 window.VimsRecipeHandoff={refId,daily,package:handoffData,attach,show:recipeWindow};
 render();
 })();
