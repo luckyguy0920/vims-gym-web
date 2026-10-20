@@ -184,7 +184,7 @@ function page(){
  c.notes.map(m=>'<div>• '+clean(m)+'</div>').join('')+'</div>';
  for(let w=0;w<4;w++){
   const wk=weekText[w],targets=weekTargets(w);
-  html+='<details class="v28weekpanel"'+(w===0?' open':'')+'><summary class="v28weeksummary"><div class="v28week"><h3>'+(w+1)+'주차 · '+wk[0]+'</h3><p>'+wk[1]+'</p></div><span class="v28chevron" aria-hidden="true">⌄</span></summary><div class="v28weekbar"><span>근력 주 '+sessionDays(w).length+'회</span><span>유산소 '+targets.mins+'분/주</span><span>'+targets.sets+'세트 · '+targets.reps+'</span></div><div class="v28days">';
+  html+='<details class="v28weekpanel"'+(w===Math.max(0,Math.min(3,Math.floor(((Number(state.selectedDay)||1)-1)/7)))?' open':'')+'><summary class="v28weeksummary"><div class="v28week"><h3>'+(w+1)+'주차 · '+wk[0]+'</h3><p>'+wk[1]+'</p></div><span class="v28chevron" aria-hidden="true">⌄</span></summary><div class="v28weekbar"><span>근력 주 '+sessionDays(w).length+'회</span><span>유산소 '+targets.mins+'분/주</span><span>'+targets.sets+'세트 · '+targets.reps+'</span></div><div class="v28days">';
   for(let day=w*7+1;day<=w*7+7;day++){
    const v=daily(day,c),s=v.s;
    const menu=v.meals.map(m=>'<div><strong>'+groups[m.type]+'</strong> '+clean(m.title)+(c.kcal==null?'':' <small>약 '+money(m.kcal)+' kcal</small>')+'</div>').join('');
