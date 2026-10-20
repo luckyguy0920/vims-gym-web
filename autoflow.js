@@ -5,7 +5,7 @@ const AF_GOALS=[['fat','체지방 감량'],['muscle','근육량 향상'],['recom
 const AF_LABELS={b:'아침',l:'점심',d:'저녁',s:'간식'};
 const afFmt=x=>Number.isFinite(Number(x))?Math.round(Number(x)).toLocaleString('ko-KR'):'—';
 const afEsc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const afMetric=(label,value,unit,caption)=>`<div class="af-stat"><span>${label}</span><strong>${value==null?'—':afFmt(value)}${value==null?'':`<small> ${unit}</small>`}</strong><em>${caption||''}</em></div>`;
+const afMetric=(label,value,unit,caption)=>`<div class="af-stat"><span>${label}</span><strong>${value==null?'—':((unit==='kg'||unit==='%')?Number(value).toFixed(1):afFmt(value))}${value==null?'':`<small> ${unit}</small>`}</strong><em>${caption||''}</em></div>`;
 const afNavigation=[
  ['home','⌂','내 계획'],['body','▣','인바디 등록'],['plan','▦','28일 전체'],['nutrition','◫','맞춤 식단'],
  ['workout','◉','오늘 운동'],['diet','✎','식사·생활 기록'],['recipes','♨','건강 레시피'],['stats','▥','변화 기록']
