@@ -58,7 +58,7 @@ function handoffData(){
    training:Boolean(info.s.training),
    aerobic:Math.round(info.s.cardio),
    exercises:info.s.machines.map(ex=>({name:String(ex.name),sets:String(info.s.wt.sets),reps:String(info.s.wt.reps)})),
-   rest:info.s.training?'훈련 후 정리운동 5~10분, 수면 7~9시간, 통증과 피로 점검':'무리하지 않는 걷기와 스트레칭, 수면 7~9시간',
+   rest:info.s.training?'훈련 후 정리운동 5~10분, 수면 '+(Number(state.profile?.age)>=65?'7~8시간':'7~9시간')+', 통증과 피로 점검':'무리하지 않는 걷기와 스트레칭, 수면 '+(Number(state.profile?.age)>=65?'7~8시간':'7~9시간'),
    meals:info.meals.map(m=>({
     type:m.type,title:m.title,
     kcal:Math.round(m.kcal*10)/10,protein:Math.round(m.p*10)/10,
