@@ -13,7 +13,7 @@ const styles=`
 :root{--ink:#172b44;--blue:#2659ab;--pale:#f1f5fa;--line:#e0e9f2}*{box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f5f7fa;color:var(--ink);padding:0;margin:0}
 button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #a4c2ff;outline-offset:3px}
-.mp-wrap{max-width:1050px;margin:0 auto;padding:20px 16px 70px}
+.mp-wrap{max-width:1050px;margin:0 auto;padding:20px 16px 138px}
 .mp-hero{background:linear-gradient(130deg,#0e2544,#27599b);color:#fff;border-radius:19px;padding:24px;margin-bottom:14px}
 .mp-hero span{color:#bce88f;font-size:11px;font-weight:900;letter-spacing:.12em}.mp-hero h1{font-size:clamp(23px,4vw,33px);margin:9px 0 7px}.mp-hero p{margin:0;color:#d9e8fa;font-size:13px;line-height:1.8}
 .mp-status{border-radius:13px;padding:15px;margin:13px 0;background:#eef6ff;border:1px solid #d4e4f4;font-size:13px;line-height:1.7;color:#385d89}
@@ -43,9 +43,22 @@ button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus
 .mp-coverphoto{width:100%;height:200px;object-fit:cover;border-radius:12px;margin:9px 0}.mp-modal h3{font-size:15px;margin:20px 0 8px}
 .mp-ingredients{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mp-ingredients div{display:flex;justify-content:space-between;gap:8px;background:#f4f8fd;padding:9px;border-radius:8px;font-size:12px}
 .mp-modal ol,.mp-modal ul{padding-left:21px;color:#536b85;font-size:13px;line-height:1.95}.mp-modal p{font-size:12px;color:#6d7e92;line-height:1.8}
-@media(max-width:680px){.mp-metrics{grid-template-columns:1fr 1fr}.mp-days{grid-template-columns:1fr}.mp-ingredients{grid-template-columns:1fr}.mp-wrap{padding:10px 10px 50px}.mp-hero{padding:20px}}
+@media(max-width:680px){.mp-metrics{grid-template-columns:1fr 1fr}.mp-days{grid-template-columns:1fr}.mp-ingredients{grid-template-columns:1fr}.mp-wrap{padding:10px 10px 140px}.mp-hero{padding:20px}}
+.mp-official-logo{width:min(250px,80%);height:auto;aspect-ratio:1410/185;display:block;object-fit:contain;object-position:left center;margin:2px 0 17px}
+.mp-fixed-consult{position:fixed;z-index:100;bottom:calc(13px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(100% - 26px,760px);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;background:#132e50;border-radius:15px;padding:11px 12px 11px 17px;color:#fff;box-shadow:0 9px 36px #162b4680}
+.mp-fixed-consult span{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:900}
+.mp-fixed-consult small{font-size:10px;color:#b7d49c;font-weight:800}
+.mp-fixed-consult a{background:#c9f191;border-radius:10px;padding:12px 16px;color:#1e3728;text-decoration:none;font-weight:900;font-size:13px;white-space:nowrap}
+@media(max-width:370px){.mp-fixed-consult span{font-size:10px}.mp-fixed-consult a{font-size:11px;padding:11px 9px}}
+@media print{.mp-fixed-consult{display:none!important}}
 `;
 const style=document.createElement('style');style.textContent=styles;document.head.appendChild(style);
+const footerAction=document.createElement('aside');
+footerAction.className='mp-fixed-consult';
+footerAction.setAttribute('aria-label','언제나 이용할 수 있는 빔스짐 네이버 톡톡 상담');
+footerAction.innerHTML='<span><small>VG VIMS GYM</small>운동 · 식단 상담</span><a target="_blank" rel="noopener noreferrer" href="'+TALK+'">네이버 톡톡 상담 ↗</a>';
+document.body.appendChild(footerAction);
 function readStored(){
  try{
  const value=JSON.parse(localStorage.getItem(KEY)||'null');
@@ -58,7 +71,7 @@ function renderError(msg){
  '<div class="mp-actions"><a href="/receive" class="mp-sub">내 휴대전화에 저장한 계획 확인</a></div>'+
  '<p class="mp-micro">일회용 코드는 한 번 사용하거나 10분이 지나면 만료됩니다. 공용 웹사이트에서 새로운 코드를 생성해 주세요.</p>';
 }
-function hero(){return '<header class="mp-hero"><span>VIMS GYM · 나의 28일 계획</span><h1>내 휴대전화에서 이어보기</h1><p>일회성 공유 코드를 이용해 가져온 식사·운동·휴식과 참고 레시피입니다. 원본 인바디 측정값과 이름은 전송되지 않습니다.</p></header>';}
+function hero(){return '<header class="mp-hero"><img class="mp-official-logo" src="/vims-logo.svg?v=1" alt="VG VIMS GYM 공식 로고" width="250" height="33"><span>나의 28일 계획</span><h1>내 휴대전화에서 이어보기</h1><p>일회성 공유 코드를 이용해 가져온 식사·운동·휴식과 참고 레시피입니다. 원본 인바디 측정값과 이름은 전송되지 않습니다.</p></header>';}
 function weekCards(){
  let sections='';
  for(let w=0;w<4;w++){
