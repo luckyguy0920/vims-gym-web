@@ -98,7 +98,7 @@ function attach(){
   const recipes=Array.from(document.querySelectorAll('#desktopNav [data-value="stats"],#mobileNav [data-value="stats"]'));
   for(const item of recipes)item.remove();
   // Do not encourage downloading sensitive values onto a shared terminal.
-  for(const b of document.querySelectorAll('button[data-action="export"],button[data-action="course-csv"]'))b.remove();
+  for(const b of document.querySelectorAll('button[data-action="export"],button[data-action="export-course"],button[data-action="course-csv"],button[data-plan28="print"]'))b.remove();
 }
 function warn(){
   visibleWarning=true;
