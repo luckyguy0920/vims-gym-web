@@ -59,6 +59,7 @@ def index():
         'localStorage.removeItem(k);sessionStorage.removeItem(k)})}catch(e){}</script>'
     )
     html = html.replace("<script>\n'use strict';", bootstrap + "<script>\n'use strict';", 1)
+    html = html.replace('<meta name="theme-color" content="#0b1524" />', '<meta name="theme-color" content="#08090B" />', 1)
     html = html.replace("</head>", '<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2"/></head>', 1)
     scripts = (
         '<script src="/nutrition.js?v=2"></script>'
@@ -69,6 +70,7 @@ def index():
         '<script src="/recipe-handoff.js?v=3"></script>'
         '<script src="/branding.js?v=2"></script>'
         '<script src="/modern-ui.js?v=1"></script>'
+        '<script src="/dark-ui.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -252,6 +254,10 @@ def favicon_svg():
 @app.get("/modern-ui.js")
 def modern_ui_script():
     return FileResponse(ROOT / "modern-ui.js", media_type="application/javascript", headers={"Cache-Control":"no-store"})
+
+@app.get("/dark-ui.js")
+def dark_ui_script():
+    return FileResponse(ROOT / "dark-ui.js", media_type="application/javascript", headers={"Cache-Control":"no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
