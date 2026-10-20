@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const FORM_KEYS=[
- {key:'height',label:'신장',unit:'cm',min:110,max:220,example:'예: 165.0',hint:'첫 입력 후 자동 유지'},
+ {key:'height',label:'신장',unit:'cm',min:110,max:220,example:'예: 165.0',hint:'이번 이용 중에만 입력'},
  {key:'weight',label:'체중',unit:'kg',min:25,max:350,example:'예: 58.5',hint:'인바디 체성분 분석'},
  {key:'smm',label:'골격근량',unit:'kg',min:5,max:120,example:'예: 22.0',hint:'근육량 항목'}
 ];
@@ -10,29 +10,12 @@ const QGOALS=[['recomp','체성분 개선'],['fat','체지방 감량'],['muscle'
 const QN=x=>x==null||x===''?null:Number(x);
 const QR=x=>Math.round(x*10)/10;
 const QE=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const HISTORY_KEY='vims28_manual_measurements_v1';
 let qGoal=state.goal?.kind||'recomp';
-let qInputMode='fatMass'; // Only one of fat-mass or fat-percent is entered.
-function qHist(){
- try{const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');return Array.isArray(h)?h.slice(-12):[];}
- catch{return [];}
-}
-function qSaveHist(body) {
- const h=qHist();
- const last=h[h.length-1];
- const delta=k=>Math.abs(Number(last?.[k]??-1000)-Number(body[k]))<0.05;
- if(last&&['height','weight','smm','fatMass','pbf'].every(delta))return;
- h.push({...body,enteredAt:new Date().toISOString()});
- try{localStorage.setItem(HISTORY_KEY,JSON.stringify(h.slice(-12)));}catch{}
-}
-function qLastOther(){
- let h=qHist(),cur=state.body||{};
- for(let i=h.length-1;i>=0;i--){
-  let x=h[i];
-  if(Math.abs(Number(x.weight)-Number(cur.weight))>.05||Math.abs(Number(x.smm)-Number(cur.smm))>.05||Math.abs(Number(x.fatMass)-Number(cur.fatMass))>.05)return x;
- }
- return null;
-}
+let qInputMode='fatMass';
+// 공용 단말: 개인 측정 기록은 디스크나 브라우저 저장소에 기록하지 않는다.
+function qHist(){return [];}
+function qSaveHist(){}
+function qLastOther(){return null;}
 function qField(k,label,unit,placeholder,hint,prev){
  return `<label class="qf-field" for="quick_${k}"><span>${label} <small>${unit}</small></span><div class="qf-inputrow"><input id="quick_${k}" type="number" inputmode="decimal" enterkeyhint="next" autocomplete="off" step="0.1" min="0" placeholder="${placeholder}" value="${prev==null?'':QE(prev)}" required/><span class="qf-unit">${unit}</span></div><small class="qf-hint">${hint}</small></label>`;
 }
@@ -90,24 +73,24 @@ function qPage(){
  const b=state.body||{},first=!Boolean(b.height);
  const near=qHist().length;
  return `${title(first?'인바디 빠른 입력':'인바디 수치 수정·재측정','사진 촬영이나 서버 분석 없이 인바디 결과지의 숫자만 입력합니다.')}
- <div class="qf-intro"><div><div class="qf-eyebrow">VIMS GYM · 인바디 빠른 등록</div><h2>${first?'4개 항목만 입력하세요.':'기존 신장은 유지하고 달라진 숫자만 입력하세요.'}</h2><p>체지방량과 체지방률 중 하나만 선택하면 나머지는 자동 계산합니다.<br/>저장과 동시에 28일 식단 · 운동 · 휴식이 모두 연동됩니다.</p></div><div class="qf-step">${first?'4':'3'}<small>개 수치</small></div></div>
+ <div class="qf-intro"><div><div class="qf-eyebrow">VIMS GYM · 인바디 빠른 등록</div><h2>${'4개 숫자만 입력하면 완료됩니다.'}</h2><p>체지방량과 체지방률 중 하나만 선택하면 나머지는 자동 계산합니다.<br/>저장과 동시에 28일 식단 · 운동 · 휴식이 모두 연동됩니다.</p></div><div class="qf-step">${'4'}<small>개 수치</small></div></div>
  <form id="quickInbodyForm" class="qf-card" novalidate>
   <div class="qf-header"><div><span class="qf-kicker">STEP 01 · 인바디 수치</span><h3>체성분 결과지 숫자 입력</h3></div><span class="qf-chip">서버 전송 없음</span></div>
   <div class="qf-formgrid">
    ${FORM_KEYS.map(v=>qField(v.key,v.label,v.unit,v.example,v.hint,b[v.key])).join('')}
    <div id="qf-fat-holder">${qModeField(b)}</div>
   </div>
-  <div class="qf-tiny">${!first?'지난번 신장이 자동 입력됐습니다. 바뀐 경우에만 수정하세요.':'인바디 결과지의 신장, 체중, 골격근량과 체지방 수치 하나를 찾아 입력하세요.'}</div>
+  <div class="qf-tiny">${!first?'현재 입력값을 다시 확인하거나 수정할 수 있습니다.':'인바디 결과지의 신장, 체중, 골격근량과 체지방 수치 하나를 찾아 입력하세요.'}</div>
   <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 02 · 입력 즉시 계산</span><h3>자동 산출 결과</h3></div><span class="qf-chip">추정 수치</span></div>
   <div class="qf-preview" id="qf-preview"><div class="qf-wait"><b>수치를 입력해 주세요</b><span>체지방률 · 체질량지수 · 제지방량이 자동 계산됩니다.</span></div></div>
   <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 03 · 한 번만 선택</span><h3>원하는 목표 방향</h3></div><span class="qf-chip">나중에 변경 가능</span></div>
   <div class="qf-goals">${QGOALS.map(([k,label])=>`<button type="button" data-qgoal="${k}" aria-pressed="${qGoal===k}" class="${qGoal===k?'active':''}">${label}</button>`).join('')}</div>
   <p class="qf-caution">기본값은 체성분 개선입니다. 인바디만으로 나이·성별·질환·활동량을 알 수 없으므로, 칼로리와 운동 강도는 성인 일반 참고용으로만 제안됩니다.</p>
   <div class="qf-error" id="qf-error" role="alert" aria-live="polite"></div>
-  <button type="submit" class="qf-submit" id="qf-submit">${near?'전체 계획 다시 연결하기':'28일 식사·운동·휴식 자동 만들기'} <span>→</span></button>
-  <p class="qf-privacy">개인 측정값은 현재 브라우저에만 보관됩니다. 공용 기기에서는 사용하지 마세요. 측정값을 확인하지 않은 상태에서는 계획을 생성하지 않습니다.</p>
+  <button type="submit" class="qf-submit" id="qf-submit">28일 식사·운동·휴식 결과 보기 <span>→</span></button>
+  <p class="qf-privacy">이 페이지는 공용 이용용입니다. 결과는 이번 이용 중에만 표시되고, 이용 종료 또는 새로고침 시 삭제됩니다. 실제 건강 상담에는 원본 결과지를 지참해 주세요.</p>
  </form>
- ${qHistoryMarkup()}`;
+ `;
 }
 function qSave(){
  const p=qPreviewValues();
