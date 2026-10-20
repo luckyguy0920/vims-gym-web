@@ -193,7 +193,7 @@ function page(){
    html+='<article class="v28card '+(s.training?'train':'rest')+'"><div class="v28cardhead"><div><small>DAY '+String(day).padStart(2,'0')+'</small><b>'+(s.training?'근력 훈련일':'회복·활동일')+'</b></div><span class="v28pill">유산소 '+s.cardio+'분</span></div>'+
    '<div class="v28line"><b>식사</b><div>'+menu+(c.kcal==null?'':'<small>식사 예상 총 '+money(v.sum.kcal)+' kcal · 단백질 '+money(v.sum.p)+' g</small>')+'</div></div>'+
    '<div class="v28line"><b>운동</b><div>'+train+'</div></div>'+
-   '<div class="v28line"><b>휴식</b><div>'+ (s.training?'운동 후 정리운동과 부위별 통증 점검':'수면과 회복에 집중, 다음 훈련일 준비') +'<small>수면 7~9시간을 기준으로, 개인 컨디션에 맞춰 조절</small></div></div>'+
+   '<div class="v28line"><b>휴식</b><div>'+ (s.training?'운동 후 정리운동과 부위별 통증 점검':'수면과 회복에 집중, 다음 훈련일 준비') +'<small>수면 '+(Number(state.profile?.age)>=65?'7~8시간':'7~9시간')+'을 기준으로, 개인 컨디션에 맞춰 조절</small></div></div>'+
    '<details><summary>식재료와 권장량 상세 보기</summary>'+portion+'<div class="v28detail">식이섬유 추정 '+money(v.sum.fiber)+' g</div></details>'+
    '<button class="btn ghost small" style="margin-top:10px" data-action="day-diet" data-value="'+day+'">DAY '+day+' 식사·운동 기록 →</button></article>';
   }
