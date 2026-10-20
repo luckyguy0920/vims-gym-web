@@ -11,7 +11,15 @@ const afNavigation=[
  ['workout','◉','오늘 운동'],['diet','✎','식사·생활 기록'],['recipes','♨','건강 레시피'],['stats','▥','변화 기록']
 ];
 paths.splice(0,paths.length,...afNavigation);
-function afReady(){return Boolean(state.goal?.kind&&state.body?.weight&&validateScan(state.body).length===0)}
+function afReady(){
+ const p=state.profile||{};
+ return Boolean(state.goal?.kind&&state.body?.weight&&validateScan(state.body).length===0
+  &&Number.isInteger(Number(p.age))&&Number(p.age)>=18&&Number(p.age)<=79
+  &&['female','male'].includes(p.sex)
+  &&['sedentary','light','moderate','high'].includes(p.activity)
+  &&['beginner','intermediate','advanced'].includes(p.experience)
+  &&p.special==='none');
+}
 function afCalc(){
  if(!afReady()||!window.VimsPlan28)return null;
  const c=window.VimsPlan28.nutrition();
@@ -42,7 +50,8 @@ function afHome(){
  return `${title('나의 28일 통합 관리','한 번 등록한 인바디 측정값으로 식단·운동·휴식 화면이 자동으로 연결됩니다.')}
   <div class="af-dashboard">
   <div class="af-top"><div><span class="af-tag">내 인바디에서 생성한 관리 계획</span><h2>${afEsc(goalLabel())}</h2><p>운동 목표를 변경하면 28일 식단과 근력·유산소 배치가 즉시 다시 계산됩니다.</p></div><div class="af-topright">${afWeekProgress(day)}<button class="af-ghostlight" data-action="route" data-value="body">인바디 다시 등록</button></div></div>
-  <div class="af-mid"><div class="af-minititle">나의 목표 방향 <small>기본값 자동 설정 · 언제든 변경 가능</small></div>${afGoalButtons()}</div>
+  <div class="af-mid"><div class="af-minititle">나의 목표 방향 <small>언제든 변경 가능</small></div>${afGoalButtons()}
+  <p class="af-profile-summary">개인 특성 반영 · ${afEsc(state.profile?.age)}세 · ${state.profile?.sex==='male'?'남성 계산 계수':'여성 계산 계수'} · ${afEsc(({sedentary:'활동 적음',light:'가벼운 활동',moderate:'보통 활동',high:'활동 많음'}[state.profile?.activity]||''))} · ${afEsc(({beginner:'운동 초보',intermediate:'중급',advanced:'숙련'}[state.profile?.experience]||''))}</p></div>
   <div class="af-metrics">
     ${afMetric('체중',w.weight,'kg','인바디 현재값')}
     ${afMetric('골격근량',w.smm,'kg','근력운동 기준')}
@@ -94,7 +103,7 @@ const STYLES=`
 .af-safety{margin:14px 0;background:#fff8eb;border:1px solid #ecdebf;color:#775f35;font-size:12px;border-radius:12px;padding:14px;line-height:1.75}.af-safety p{margin:5px 0}
 .af-top{background:linear-gradient(115deg,#122947,#234f98);color:#fff;border-radius:22px;padding:24px;display:flex;align-items:center;justify-content:space-between;gap:25px;flex-wrap:wrap}.af-top h2{font-size:29px;margin:12px 0 5px}.af-top p{color:#d4e3fa;font-size:12px;line-height:1.8;max-width:430px}.af-topright{min-width:205px}.af-ghostlight{border:1px solid #ffffff8a;color:#fff;background:transparent;padding:9px 13px;border-radius:9px;font-size:12px;font-weight:800;margin-top:12px}
 .af-progress>div:first-child{display:flex;justify-content:space-between;gap:9px;color:#dbe6f8;font-size:12px}.af-progress b{color:white}.af-track{margin-top:10px;height:8px;border-radius:8px;background:#ffffff46;overflow:hidden}.af-track i{display:block;height:100%;background:#bced8c;border-radius:8px}
-.af-mid{margin:17px 0}.af-minititle{font-weight:900;font-size:15px}.af-minititle small{font-size:11px;color:#7a8ba1;margin-left:8px;font-weight:500}.af-goals{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.af-goals button{border:1px solid #d5e0ee;border-radius:10px;background:#fff;color:#445e82;font-weight:800;padding:11px 14px;font-size:13px}.af-goals button.on{background:#2558b9;border-color:#2558b9;color:#fff}
+.af-profile-summary{color:#526b8d;font-size:12px;line-height:1.7;margin:9px 0}.af-mid{margin:17px 0}.af-minititle{font-weight:900;font-size:15px}.af-minititle small{font-size:11px;color:#7a8ba1;margin-left:8px;font-weight:500}.af-goals{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.af-goals button{border:1px solid #d5e0ee;border-radius:10px;background:#fff;color:#445e82;font-weight:800;padding:11px 14px;font-size:13px}.af-goals button.on{background:#2558b9;border-color:#2558b9;color:#fff}
 .af-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:11px 0}.af-stat{background:#fff;border:1px solid #e2e9f2;border-radius:14px;padding:15px;min-width:0}.af-stat span,.af-stat strong,.af-stat em{display:block}.af-stat span{font-size:12px;font-weight:800;color:#647a95}.af-stat strong{font-size:24px;color:#1a3760;margin:7px 0;letter-spacing:-.025em}.af-stat small{font-size:12px}.af-stat em{font-style:normal;font-size:10px;color:#8390a3;line-height:1.7}.af-nutrients .af-stat{background:#eef5ff}
 .af-today{margin-top:20px}.af-today-header,.af-daytitle{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0;flex-wrap:wrap}.af-today-header span{color:#3368b8;font-weight:800;font-size:12px}.af-today-header h3{font-size:22px;margin:4px 0}.af-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.af-dcard{background:#fff;border:1px solid #e2eaf2;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:7px}.af-cardtitle{display:flex;align-items:center;gap:8px;margin-bottom:3px}.af-cardtitle span{color:#3367c3;font-size:13px;font-weight:900}.af-cardtitle h4{font-size:17px;margin:0}.af-meal,.af-ex{display:flex;align-items:flex-start;gap:6px;padding:9px 0;border-bottom:1px solid #edf1f7;font-size:12px}.af-meal span,.af-ex span{width:31px;flex-shrink:0;color:#416bb4;font-weight:800}.af-meal b,.af-ex b{flex:1;line-height:1.5;color:#324761}.af-meal em{font-size:10px;white-space:nowrap;font-style:normal;color:#8390a4}.af-ex small{color:#8794a4;white-space:nowrap}.af-dfoot{margin-top:auto;font-size:12px;padding-top:12px;color:#496280}.af-textbutton{font-weight:900;color:#2b62c3;border:0;background:transparent;padding:6px 0;text-align:left;font-size:12px}
 .af-recoveryday,.af-rest{font-size:12px;color:#526d8b;line-height:1.85}.af-rest p{margin:9px 0}
@@ -119,9 +128,21 @@ navRender=function(){
 // Existing goal confirmation remains available. After confirmation, direct users to their integrated home.
 const baseChooseGoal=chooseGoal;
 chooseGoal=function(kind){
- const before=state.goal?.kind;
+ const p=state.profile||{};
+ const b=state.body||{};
+ const bmi=Number(b.weight)/((Number(b.height)/100)**2);
+ if(kind==='fat'&&Number.isFinite(bmi)&&bmi<20.5){
+  toast('체질량지수가 낮은 범위에서는 자동 감량 계획을 만들지 않습니다. 체성분 개선이나 건강 목표를 선택해 주세요.');
+  return;
+ }
  baseChooseGoal(kind);
  if(state.goal?.kind===kind&&afReady()){
+  // Base goal selection resets the default settings. Reapply the person's choices.
+  const activity={sedentary:'low',light:'low',moderate:'medium',high:'high'}[p.activity];
+  state.goal.activity=activity||'low';
+  state.goal.experience=p.experience||'beginner';
+  state.goal.sessions=String(Number(p.age)>=65?2:({beginner:2,intermediate:3,advanced:4}[p.experience]||2));
+  state.goal.sessionMins=Number(p.age)>=65?'35':p.experience==='beginner'?'40':'50';
   state.autoPlanEnabled=true;
   state.planSource='inbody';
   save();
