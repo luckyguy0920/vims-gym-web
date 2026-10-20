@@ -113,14 +113,32 @@ const STYLES=`
 @media(max-width:700px){.af-columns,.af-3,.af-nmeals,.af-worklist{grid-template-columns:1fr}.af-shortcuts{grid-template-columns:1fr 1fr}.af-cover{padding:23px}.af-cover h2{font-size:28px}.af-top{padding:20px}.af-top h2{font-size:24px}.af-stat strong{font-size:20px}.af-nutbar h2{font-size:20px}}
 `;
 const styles=document.createElement('style');styles.textContent=STYLES;document.head.appendChild(styles);
+function afNavIcon(id){
+ const paths={
+  home:'<path d="M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z"/>',
+  body:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h6M8 16h4"/>',
+  plan:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M14 14h3M8 18h3"/>',
+  nutrition:'<circle cx="12" cy="12" r="7"/><path d="M3 5v14M21 5v14"/>',
+  workout:'<path d="M3 8v8M6 6v12M9 10h6M15 6v12M18 8v8M1 10v4M21 10v4"/>',
+  diet:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6M9 10h6M9 14h6M9 18h4"/>',
+  recipes:'<path d="M12 6c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1zM12 6v15"/>',
+  stats:'<path d="M3 20h18M6 17v-5M12 17V8M18 17V4"/>'
+ };
+ return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true">'+(paths[id]||paths.home)+'</svg>';
+}
 const baseNavRender=navRender;
 navRender=function(){
  baseNavRender();
  const mobile=document.querySelector('#mobileNav');
  if(mobile){
   const list=[['home','⌂','홈'],['body','▣','인바디'],['plan','▦','28일'],['nutrition','◫','식단'],['workout','◉','운동']];
-  mobile.innerHTML=list.map(([id,ico,label])=>`<button type="button" data-action="route" data-value="${id}" class="${route===id?'active':''}"><span>${ico}</span><span>${label}</span></button>`).join('');
+  mobile.innerHTML=list.map(([id,ico,label])=>`<button type="button" data-action="route" data-value="${id}" class="${route===id?'active':''}" aria-current="${route===id?'page':'false'}"><span class="vims-tab-icon">${afNavIcon(id)}</span><span class="vims-tab-label">${label}</span></button>`).join('');
  }
+ const desktop=document.querySelector('#desktopNav');
+ if(desktop)desktop.querySelectorAll('button[data-value]').forEach(btn=>{
+  const slot=btn.querySelector('.nav-icon');
+  if(slot)slot.innerHTML=afNavIcon(btn.dataset.value);
+ });
 };
 // Existing goal confirmation remains available. After confirmation, direct users to their integrated home.
 const baseChooseGoal=chooseGoal;
