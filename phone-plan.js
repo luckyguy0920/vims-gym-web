@@ -54,7 +54,62 @@ button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus
 .mp-fixed-consult a:focus-visible{outline:3px solid #174b8f;outline-offset:3px}
 @media print{.mp-fixed-consult{display:none!important}}
 `;
-const style=document.createElement('style');style.textContent=styles;document.head.appendChild(style);
+const phoneModernStyles=`
+:root{--ink:#192B40;--blue:#285281;--pale:#F5F7FA;--line:#E5EBF1}
+body{background:#F6F8FB;color:#192B40;font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;letter-spacing:-.02em;-webkit-font-smoothing:antialiased}
+.mp-wrap{max-width:980px}
+.mp-hero{background:#182E4A;border:1px solid #25415E;border-radius:18px;padding:26px;box-shadow:none}
+.mp-hero span{color:#B7CDE5;font-weight:700;letter-spacing:.07em}
+.mp-hero h1{font-size:clamp(24px,3.4vw,32px);font-weight:770;letter-spacing:-.045em}
+.mp-hero p{font-size:12px;line-height:1.7;color:#C9D6E5}
+.mp-status{background:#F1F5FA;border:1px solid #E2EAF3;border-radius:12px;color:#59728E;font-size:12px;line-height:1.7}
+.mp-status b{color:#304E70;font-size:13px;font-weight:730}
+.mp-status.warn{background:#FDF8EF;color:#756B5B;border:1px solid #EEE7D9}
+.mp-check{font-size:12px;color:#586D84}
+.mp-primary,.mp-sub{font-size:13px;font-weight:720;border-radius:10px}
+.mp-primary{background:#285281}
+.mp-sub{background:#FFF;border-color:#E0E8F1;color:#3F5D7C}
+.mp-heading h2{font-size:20px;font-weight:770;letter-spacing:-.035em}
+.mp-heading p{font-size:12px;color:#8293A6}
+.mp-metrics{gap:10px}
+.mp-metric{border-radius:13px;border:1px solid #E4EBF1;padding:17px}
+.mp-metric span{font-size:11px;color:#8696A7;font-weight:660}
+.mp-metric b{color:#254567;font-size:20px;font-weight:750;letter-spacing:-.03em}
+.mp-week{border-radius:15px;border:1px solid #E3EAF1;padding:17px}
+.mp-weekhead span{color:#6482A4;font-weight:700}
+.mp-weekhead h3{font-size:18px;font-weight:760;letter-spacing:-.02em}
+.mp-day{border-radius:13px;border:1px solid #E6ECF2;padding:15px}
+.mp-day.train{border-left:3px solid #517FB4}
+.mp-day.rest{border-left:3px solid #CDD5DF}
+.mp-dayhead b,.mp-dayhead strong{font-weight:740}
+.mp-dayhead span{color:#748FAC}
+.mp-dayhead small{color:#8798AA}
+.mp-meal{border-top:1px solid #EEF2F6}
+.mp-meal small{color:#7190B0;font-size:10px;font-weight:690}
+.mp-meal strong{color:#354C66;font-size:12px;font-weight:680}
+.mp-meal em{color:#8C9DB0}
+.mp-recipe-btn{background:#F4F7FB;border-color:#E0E8F2;color:#315C8D;font-weight:700;border-radius:9px;min-height:33px}
+.mp-rest{color:#75879A;font-size:11px}
+.mp-footer{background:#F1F5F9;border:1px solid #E1E8F0;border-radius:16px;color:#26415D;padding:23px}
+.mp-footer h2{font-size:21px;font-weight:770;letter-spacing:-.035em}
+.mp-footer p{color:#657A91;font-size:12px}
+.mp-footer a{background:#FF7A00;color:#FFF;border-radius:10px;font-weight:760}
+.mp-micro{font-size:11px;line-height:1.75;color:#8998AA}
+.mp-modal{border-radius:16px}
+.mp-modal h2{font-size:20px;font-weight:760}
+.mp-modal h3{font-size:15px;font-weight:740}
+.mp-ingredients div{background:#F6F8FB;border-radius:9px;color:#536B83}
+@media(max-width:680px){
+.mp-wrap{padding:12px 12px 142px}
+.mp-hero{padding:21px;border-radius:16px}
+.mp-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mp-week{padding:14px}
+.mp-day{padding:13px}
+.mp-hero h1{font-size:25px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+`;
+const style=document.createElement('style');style.textContent=styles+phoneModernStyles;document.head.appendChild(style);
 const footerAction=document.createElement('aside');
 footerAction.className='mp-fixed-consult';
 footerAction.setAttribute('aria-label','언제나 이용할 수 있는 빔스짐 네이버 톡톡 상담');
