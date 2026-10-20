@@ -2,8 +2,8 @@
 (function(){
 'use strict';
 const FORM_KEYS=[
- {key:'height',label:'신장',unit:'cm',min:110,max:220,example:'예: 165.0',hint:'이번 이용 중에만 입력'},
- {key:'weight',label:'체중',unit:'kg',min:25,max:350,example:'예: 58.5',hint:'인바디 체성분 분석'},
+ {key:'height',label:'신장',unit:'cm',min:110,max:220,example:'예: 165.0',hint:'인바디 결과지 기준'},
+ {key:'weight',label:'체중',unit:'kg',min:25,max:350,example:'예: 58.5',hint:'측정 결과지'},
  {key:'smm',label:'골격근량',unit:'kg',min:5,max:120,example:'예: 22.0',hint:'근육량 항목'}
 ];
 const QGOALS=[['recomp','체성분 개선'],['fat','체지방 감량'],['muscle','근육량 향상'],['fitness','건강·체력']];
@@ -78,7 +78,7 @@ function qPreview(){
  const submit=document.getElementById('qf-submit');
  if(!node)return;
  if(!p.complete){
-  node.innerHTML='<div class="qf-wait"><b>값을 입력하면</b><span>체지방률 · 체질량지수 · 제지방량이 자동 계산됩니다.</span></div>';
+  node.innerHTML='<div class="qf-wait"><b>입력과 동시에 계산</b><span>체지방률 · 체질량지수 · 제지방량</span></div>';
   if(error)error.textContent='';
   if(submit)submit.disabled=false;
   return;
@@ -104,33 +104,33 @@ function qHistoryMarkup(){
 function qPage(){
  const b=state.body||{},first=!Boolean(b.height);
  const near=qHist().length;
- return `${title(first?'인바디 빠른 입력':'인바디 수치 수정·재측정','사진 촬영이나 서버 분석 없이 인바디 결과지의 숫자만 입력합니다.')}
- <div class="qf-intro"><div><div class="qf-eyebrow">VIMS GYM · 인바디 빠른 등록</div><h2>${'4개 숫자만 입력하면 완료됩니다.'}</h2><p>체지방량과 체지방률 중 하나만 선택하면 나머지는 자동 계산합니다.<br/>저장과 동시에 28일 식단 · 운동 · 휴식이 모두 연동됩니다.</p></div><div class="qf-step">${'4'}<small>개 수치</small></div></div>
+ return `${title(first?'인바디 입력':'인바디 수정','측정값과 기본 정보로 28일 계획을 만듭니다.')}
+ <div class="qf-intro"><div><div class="qf-eyebrow">VIMS GYM · 28일 맞춤 관리</div><h2>내 몸에 맞는<br/>28일의 시작</h2><p>인바디 수치 4개와 기본 정보만 입력하세요.<br/>식사 · 운동 · 휴식 계획이 자동으로 연결됩니다.</p></div><div class="qf-step">${'4'}<small>개 수치</small></div></div>
  <form id="quickInbodyForm" class="qf-card" novalidate>
-  <div class="qf-header"><div><span class="qf-kicker">STEP 01 · 인바디 수치</span><h3>체성분 결과지 숫자 입력</h3></div><span class="qf-chip">서버 전송 없음</span></div>
+  <div class="qf-header"><div><span class="qf-kicker">01 / 체성분</span><h3>인바디 수치</h3></div><span class="qf-chip">4개 항목</span></div>
   <div class="qf-formgrid">
    ${FORM_KEYS.map(v=>qField(v.key,v.label,v.unit,v.example,v.hint,b[v.key])).join('')}
    <div id="qf-fat-holder">${qModeField(b)}</div>
   </div>
-  <div class="qf-tiny">${!first?'현재 입력값을 다시 확인하거나 수정할 수 있습니다.':'인바디 결과지의 신장, 체중, 골격근량과 체지방 수치 하나를 찾아 입력하세요.'}</div>
-  <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 02 · 입력 즉시 계산</span><h3>자동 산출 결과</h3></div><span class="qf-chip">추정 수치</span></div>
-  <div class="qf-preview" id="qf-preview"><div class="qf-wait"><b>수치를 입력해 주세요</b><span>체지방률 · 체질량지수 · 제지방량이 자동 계산됩니다.</span></div></div>
-  <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 03 · 개인 특성</span><h3>나이 · 성별 기준 · 일상 활동</h3></div><span class="qf-chip">모든 계획에 반영</span></div>
+  <div class="qf-tiny">신장 · 체중 · 골격근량 · 체지방량(또는 체지방률)</div>
+  <div class="qf-header qf-gap"><div><span class="qf-kicker">02 / 분석</span><h3>자동 계산</h3></div><span class="qf-chip">입력 즉시 반영</span></div>
+  <div class="qf-preview" id="qf-preview"><div class="qf-wait"><b>수치를 입력하면</b><span>체지방률 · 체질량지수 · 제지방량이 표시됩니다.</span></div></div>
+  <div class="qf-header qf-gap"><div><span class="qf-kicker">03 / 기본 정보</span><h3>나에게 맞는 설정</h3></div><span class="qf-chip">계획에 반영</span></div>
   <div class="qf-profilegrid">
    <label class="qf-profilefield" for="quick_age"><span>만 나이</span><input id="quick_age" type="number" inputmode="numeric" min="18" max="79" step="1" placeholder="예: 35" value="${state.profile?.age??''}" required/><small>만 18~79세 자동 계획 기준</small></label>
-   ${qSelect('quick_sex','대사량 계산 기준',SEX_OPTIONS,state.profile?.sex||'','기초대사량 추정식의 남성·여성 계수')}
+   ${qSelect('quick_sex','성별 기준',SEX_OPTIONS,state.profile?.sex||'','기초대사량 추정식의 남성·여성 계수')}
    ${qSelect('quick_activity','평소 활동량',ACTIVITY_OPTIONS,state.profile?.activity||'','일상 움직임과 운동 빈도 선택')}
    ${qSelect('quick_experience','근력운동 경험',EXPERIENCE_OPTIONS,state.profile?.experience||'beginner','주간 운동 횟수·난이도 조정')}
    ${qSelect('quick_preference','식사 유형',FOOD_OPTIONS,state.profile?.preference||'regular','식단 구성에 반영')}
-   ${qSelect('quick_special','개별 건강 상태',[['','반드시 선택해 주세요'],['none','별도 관리가 필요한 상태 없음'],['needsReview','임신·수유/질환/알레르기/부상 등 관리 필요']],state.profile?.special||'','별도 관리 필요 시 자동 생성 대신 전문 상담')}
+   ${qSelect('quick_special','건강 상태',[['','반드시 선택해 주세요'],['none','별도 관리가 필요한 상태 없음'],['needsReview','임신·수유/질환/알레르기/부상 등 관리 필요']],state.profile?.special||'','별도 관리 필요 시 자동 생성 대신 전문 상담')}
   </div>
-  <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 04 · 목표 방향</span><h3>원하는 목표 선택</h3></div><span class="qf-chip">변경 가능</span></div>
+  <div class="qf-header qf-gap"><div><span class="qf-kicker">04 / 목표</span><h3>목표 선택</h3></div><span class="qf-chip">언제든 변경</span></div>
   <div class="qf-goals">${QGOALS.map(([k,label])=>`<button type="button" data-qgoal="${k}" aria-pressed="${qGoal===k}" class="${qGoal===k?'active':''}">${label}</button>`).join('')}</div>
-  <p class="qf-caution">기본 목표는 체성분 개선입니다. 입력한 나이·성별 계수·평소 활동량을 기초대사량 추정에 반영합니다. 이 계수만으로 개인의 실제 신체 특성을 완전히 판단할 수는 없습니다.</p>
+  <p class="qf-caution">나이·활동량 등을 반영한 추정치입니다. 실제 필요량과 다를 수 있습니다.</p>
   <div class="qf-error" id="qf-error" role="alert" aria-live="polite"></div>
-  <button type="submit" class="qf-submit" id="qf-submit">28일 식사·운동·휴식 결과 보기 <span>→</span></button>
-  <p class="qf-privacy">이 페이지는 공용 이용용입니다. 측정값과 개인 특성은 이번 이용 중에만 표시되고, 이용 종료 또는 새로고침 시 삭제됩니다. 실제 상담에는 원본 결과지를 지참해 주세요.</p>
-  <p class="qf-care">알레르기·질환·임신·수유·부상 등 개별 관리가 필요하다면 <a href="https://talk.naver.com/ct/w81ur3w?frm=mnmb#nafullscreen" target="_blank" rel="noopener noreferrer">네이버 톡톡으로 전문가 상담 문의하기 →</a></p>
+  <button type="submit" class="qf-submit" id="qf-submit">28일 계획 만들기 <span>→</span></button>
+  <p class="qf-privacy">공용 기기 · 정보는 이번 이용 중에만 표시되며, 종료 또는 새로고침 시 초기화됩니다.</p>
+  <p class="qf-care">질환 · 임신 · 알레르기 · 부상 등 개별 관리가 필요하다면 <a href="https://talk.naver.com/ct/w81ur3w?frm=mnmb#nafullscreen" target="_blank" rel="noopener noreferrer">전문가 상담 →</a></p>
  </form>
  `;
 }
@@ -198,7 +198,7 @@ const profileCss=`
 const style=document.createElement('style');style.textContent=css+profileCss;document.head.appendChild(style);
 for(const x of paths){
  if(x[0]==='home')x[2]='내 계획';
- if(x[0]==='body')x[2]='인바디 빠른 입력';
+ if(x[0]==='body')x[2]='인바디';
 }
 const originalRender=render;
 render=function(){
@@ -211,7 +211,7 @@ render=function(){
   if(node&&!node.querySelector('#quick-edit')){
    const wrap=document.createElement('div');
    wrap.className='qf-homeedit';
-   wrap.innerHTML='<button id="quick-edit" type="button" class="btn soft" data-action="route" data-value="body">▣ 인바디 숫자 다시 입력 · 재측정 →</button>';
+   wrap.innerHTML='<button id="quick-edit" type="button" class="btn soft" data-action="route" data-value="body">인바디 수정 →</button>';
    node.insertBefore(wrap,node.firstChild);
   }
  }
