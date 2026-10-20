@@ -35,14 +35,8 @@ function attachPersistentConsult(){
  const el=document.createElement('aside');
  el.id='vg-fixed-consult';
  el.className='vg-fixed-consult';
- el.setAttribute('aria-label','항상 보이는 네이버 톡톡 상담');
- el.innerHTML='<div class="vg-consult-message">'+
-  '<span class="vg-consult-overline">VIMS GYM · 맞춤 관리</span>'+
-  '<strong>운동 · 식단, 전문가와 상담하세요</strong></div>'+
-  '<a class="vg-consult-action" href="'+TALK_URL+'" target="_blank" rel="noopener noreferrer" aria-label="빔스짐 네이버 톡톡 상담 및 회원 등록 문의, 새 창 열림">'+
-  '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9 8.4 8.4 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8v.5z"/></svg>'+
-  '<span>네이버 톡톡 상담 · 등록 문의</span>'+
-  '<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10"/></svg></a>';
+ el.setAttribute('aria-label','하단 고정 네이버 톡톡 상담');
+ el.innerHTML='<a class="vg-consult-action" href="'+TALK_URL+'" target="_blank" rel="noopener noreferrer" aria-label="네이버 톡톡으로 상담 시작, 새 창 열림">상담 시작</a>';
  document.body.appendChild(el);
 }
 const style=document.createElement('style');
@@ -56,32 +50,22 @@ style.textContent=`
 .topbar .mobile-brand .vg-home-brand{padding:7px 2px}
 .topbar .mobile-brand .vg-official-logo{width:160px;max-width:100%}
 .topbar .profile{display:none!important}
-.vg-fixed-consult{position:fixed;right:22px;bottom:19px;z-index:90;display:flex;gap:13px;align-items:center;
- padding:10px 11px 10px 19px;max-width:calc(100vw - 30px);border-radius:17px;
- background:#122c4c;color:#fff;border:1px solid rgba(255,255,255,.18);
- box-shadow:0 8px 32px rgba(5,25,50,.24);font-family:inherit}
-.vg-consult-message{display:flex;flex-direction:column;gap:4px;min-width:0}
-.vg-consult-overline{font-size:10px;color:#bfe58d;font-weight:850;letter-spacing:.04em}
-.vg-consult-message strong{font-size:13px;font-weight:900;white-space:nowrap}
-.vg-consult-action{display:flex;align-items:center;justify-content:center;gap:9px;padding:12px 15px;
- border-radius:11px;min-height:45px;color:#173523!important;text-decoration:none!important;
- background:#c9f28f;white-space:nowrap;font-size:13px;font-weight:900;transition:filter .2s,transform .2s}
-.vg-consult-action:hover{filter:brightness(1.05);transform:translateY(-1px)}
-.vg-consult-action:focus-visible{outline:3px solid #90afff;outline-offset:3px}
-.work{padding-bottom:125px!important}
+.vg-fixed-consult{position:fixed;right:24px;bottom:24px;z-index:90;width:208px;max-width:calc(100vw - 28px);font-family:inherit}
+.vg-consult-action{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+ border:0;border-radius:14px;background:#FF7A00;color:#fff!important;text-decoration:none!important;
+ font-size:16px;font-weight:900;letter-spacing:-.015em;white-space:nowrap;
+ box-shadow:0 10px 24px rgba(255,122,0,.28);transition:background-color .2s,transform .2s}
+.vg-consult-action:hover{background:#F06D00;transform:translateY(-1px)}
+.vg-consult-action:active{transform:translateY(0)}
+.vg-consult-action:focus-visible{outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 6px #FF7A00}
+.work{padding-bottom:110px!important}
 @media(max-width:1120px){.sidebar .vg-official-logo{width:169px}}
 @media(max-width:750px){
  .topbar .mobile-brand{display:flex!important}
- .vg-fixed-consult{left:11px;right:11px;bottom:calc(74px + env(safe-area-inset-bottom));padding:9px 10px 9px 13px;gap:9px;border-radius:14px;max-width:none}
- .vg-consult-message{flex:1}
- .vg-consult-message strong{font-size:11px;white-space:normal;line-height:1.35}
- .vg-consult-overline{font-size:9px}
- .vg-consult-action{padding:11px 9px;min-height:43px;font-size:11px;gap:5px;flex:0 0 auto}
- .vg-consult-action svg:last-child{display:none}
- .vg-consult-action svg:first-child{width:16px;height:16px}
- .work{padding-bottom:200px!important}
+ .vg-fixed-consult{left:16px;right:16px;bottom:calc(80px + env(safe-area-inset-bottom));width:auto;max-width:none}
+ .vg-consult-action{min-height:52px;font-size:16px}
+ .work{padding-bottom:170px!important}
 }
-@media(max-width:365px){.vg-consult-message{display:none}.vg-consult-action{flex:1;font-size:13px}}
 @media print{.vg-fixed-consult{display:none!important}}
 `;
 document.head.appendChild(style);
