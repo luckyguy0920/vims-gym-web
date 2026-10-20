@@ -12,6 +12,38 @@ const QR=x=>Math.round(x*10)/10;
 const QE=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let qGoal=state.goal?.kind||'recomp';
 let qInputMode='fatMass';
+const SEX_OPTIONS=[['','선택해 주세요'],['male','남성 계수'],['female','여성 계수']];
+const ACTIVITY_OPTIONS=[['','선택해 주세요'],['sedentary','주로 앉아서 생활'],['light','가볍게 활동·주 1~3회 운동'],['moderate','보통 활동·주 3~5회 운동'],['high','활동량 많음·주 6회 이상 운동']];
+const EXPERIENCE_OPTIONS=[['beginner','초보 · 기구 운동이 낯설어요'],['intermediate','중급 · 근력운동 경험이 있어요'],['advanced','숙련 · 주기적으로 근력운동']];
+const FOOD_OPTIONS=[['regular','일반식'],['noFish','생선 제외'],['vegetarian','육류·생선 제외(달걀·유제품 가능)']];
+function qSelect(id,label,options,value,note){
+ return `<label class="qf-profilefield" for="${id}"><span>${label}</span><select id="${id}" required>${options.map(([v,t])=>`<option value="${v}" ${value===v?'selected':''}>${t}</option>`).join('')}</select><small>${note||''}</small></label>`;
+}
+function qProfileFromForm(){
+ return {age:Number(document.getElementById('quick_age')?.value||0),
+  sex:document.getElementById('quick_sex')?.value||'',
+  activity:document.getElementById('quick_activity')?.value||'',
+  experience:document.getElementById('quick_experience')?.value||'beginner',
+  preference:document.getElementById('quick_preference')?.value||'regular',
+  special:document.getElementById('quick_special')?.value||''};
+}
+function qProfileErrors(p){
+ const errors=[];
+ if(!Number.isInteger(p.age)||p.age<18||p.age>79)errors.push('현재 자동계산은 만 18~79세 성인만 이용할 수 있습니다.');
+ if(!['male','female'].includes(p.sex))errors.push('대사량 계산 기준을 선택해 주세요.');
+ if(!['sedentary','light','moderate','high'].includes(p.activity))errors.push('평소 활동량을 선택해 주세요.');
+ if(!['beginner','intermediate','advanced'].includes(p.experience))errors.push('운동 경험을 선택해 주세요.');
+ if(!['regular','noFish','vegetarian'].includes(p.preference))errors.push('식사 유형을 확인해 주세요.');
+ if(!['none','needsReview'].includes(p.special))errors.push('개별 건강 상태 확인 항목을 선택해 주세요.');
+ if(p.special==='needsReview')errors.push('임신·수유, 질환 관리, 알레르기, 섭식 문제나 운동 시 통증·부상이 있으면 자동 계획 대신 전문가의 개별 평가가 필요합니다.');
+ return errors;
+}
+function qError(message){
+ const el=document.getElementById('qf-error');
+ if(el){el.textContent=message;el.scrollIntoView?.({behavior:'smooth',block:'center'});}
+ toast(message);
+}
+
 // 공용 단말: 개인 측정 기록은 디스크나 브라우저 저장소에 기록하지 않는다.
 function qHist(){return [];}
 function qSaveHist(){}
@@ -83,9 +115,18 @@ function qPage(){
   <div class="qf-tiny">${!first?'현재 입력값을 다시 확인하거나 수정할 수 있습니다.':'인바디 결과지의 신장, 체중, 골격근량과 체지방 수치 하나를 찾아 입력하세요.'}</div>
   <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 02 · 입력 즉시 계산</span><h3>자동 산출 결과</h3></div><span class="qf-chip">추정 수치</span></div>
   <div class="qf-preview" id="qf-preview"><div class="qf-wait"><b>수치를 입력해 주세요</b><span>체지방률 · 체질량지수 · 제지방량이 자동 계산됩니다.</span></div></div>
-  <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 03 · 한 번만 선택</span><h3>원하는 목표 방향</h3></div><span class="qf-chip">나중에 변경 가능</span></div>
+  <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 03 · 개인 특성</span><h3>나이 · 성별 기준 · 일상 활동</h3></div><span class="qf-chip">모든 계획에 반영</span></div>
+  <div class="qf-profilegrid">
+   <label class="qf-profilefield" for="quick_age"><span>만 나이</span><input id="quick_age" type="number" inputmode="numeric" min="18" max="79" step="1" placeholder="예: 35" value="${state.profile?.age??''}" required/><small>만 18~79세 자동 계획 기준</small></label>
+   ${qSelect('quick_sex','대사량 계산 기준',SEX_OPTIONS,state.profile?.sex||'','기초대사량 추정식의 남성·여성 계수')}
+   ${qSelect('quick_activity','평소 활동량',ACTIVITY_OPTIONS,state.profile?.activity||'','일상 움직임과 운동 빈도 선택')}
+   ${qSelect('quick_experience','근력운동 경험',EXPERIENCE_OPTIONS,state.profile?.experience||'beginner','주간 운동 횟수·난이도 조정')}
+   ${qSelect('quick_preference','식사 유형',FOOD_OPTIONS,state.profile?.preference||'regular','식단 구성에 반영')}
+   ${qSelect('quick_special','개별 건강 상태',[['','반드시 선택해 주세요'],['none','별도 관리가 필요한 상태 없음'],['needsReview','임신·수유/질환/알레르기/부상 등 관리 필요']],state.profile?.special||'','별도 관리 필요 시 자동 생성 대신 전문 상담')}
+  </div>
+  <div class="qf-header qf-gap"><div><span class="qf-kicker">STEP 04 · 목표 방향</span><h3>원하는 목표 선택</h3></div><span class="qf-chip">변경 가능</span></div>
   <div class="qf-goals">${QGOALS.map(([k,label])=>`<button type="button" data-qgoal="${k}" aria-pressed="${qGoal===k}" class="${qGoal===k?'active':''}">${label}</button>`).join('')}</div>
-  <p class="qf-caution">기본값은 체성분 개선입니다. 인바디만으로 나이·성별·질환·활동량을 알 수 없으므로, 칼로리와 운동 강도는 성인 일반 참고용으로만 제안됩니다.</p>
+  <p class="qf-caution">기본 목표는 체성분 개선입니다. 입력한 나이·성별 계수·평소 활동량을 기초대사량 추정에 반영합니다. 이 계수만으로 개인의 실제 신체 특성을 완전히 판단할 수는 없습니다.</p>
   <div class="qf-error" id="qf-error" role="alert" aria-live="polite"></div>
   <button type="submit" class="qf-submit" id="qf-submit">28일 식사·운동·휴식 결과 보기 <span>→</span></button>
   <p class="qf-privacy">이 페이지는 공용 이용용입니다. 결과는 이번 이용 중에만 표시되고, 이용 종료 또는 새로고침 시 삭제됩니다. 실제 건강 상담에는 원본 결과지를 지참해 주세요.</p>
@@ -99,6 +140,10 @@ function qSave(){
  if(qGoal==='fat'&&p.bmi<18.5){
   toast('저체중 범위에서는 감량 계획을 자동으로 만들지 않습니다. 다른 목표를 선택해 주세요.');return;
  }
+ const profile=qProfileFromForm();
+ const errors=qProfileErrors(profile);
+ if(errors.length){qError(errors.join(' '));return;}
+ if(qGoal==='fat'&&p.bmi<20.5){qError('체질량지수가 낮은 범위에서는 자동 감량 계획을 제시하지 않습니다. 다른 목표를 선택해 주세요.');return;}
  const oldBody={...state.body};
  const oldGoal={...state.goal};
  const prevScan=scanSession;
@@ -110,10 +155,15 @@ function qSave(){
   toast('수치를 저장하지 못했습니다. 입력값을 확인해 주세요.');
   return;
  }
- // Respect prior explicit activity/training preferences when available.
- for(const key of ['experience','sessions','activity','sessionMins']){
-  if(oldGoal[key]!=null&&oldGoal[key]!=='')state.goal[key]=oldGoal[key];
- }
+ // Each visitor starts with their own characteristics; do not inherit old visitors' settings.
+ state.goal.experience=profile.experience;
+ state.goal.activity=({sedentary:'low',light:'low',moderate:'medium',high:'high'})[profile.activity];
+ state.goal.sessions=String(profile.age>=65?2:({beginner:2,intermediate:3,advanced:4})[profile.experience]);
+ state.goal.sessionMins=profile.age>=65?'35':profile.experience==='beginner'?'40':'50';
+ state.profile={...profile};
+ state.nutritionPrefs={age:profile.age,sex:profile.sex,activity:profile.activity,
+    preference:profile.preference,risk:false,created:true};
+
  state.body.date=new Date().toISOString().slice(0,10);
  state.body.source='manual';
  state.measurementsConfirmed=true;
@@ -123,7 +173,7 @@ function qSave(){
  }
  save();
  setRoute('home');
- toast('인바디 4개 수치로 식단·운동·휴식이 한 번에 연결됐습니다.');
+ toast('개인 특성과 인바디를 반영한 28일 계획이 연결됐습니다.');
 }
 const css=`
 .qf-intro{background:linear-gradient(120deg,#132c50,#245bb1);color:#fff;border-radius:20px;padding:26px;display:flex;justify-content:space-between;gap:20px;align-items:center;margin:0 0 14px}.qf-eyebrow{letter-spacing:.08em;font-size:11px;color:#b9cdf3;font-weight:900}.qf-intro h2{font-size:26px;margin:9px 0;letter-spacing:-.035em}.qf-intro p{font-size:13px;line-height:1.8;color:#d5e4fa;margin:0}.qf-step{width:88px;height:88px;border-radius:100%;background:#c9f197;color:#183829;display:grid;place-content:center;font-size:32px;font-weight:950;flex-shrink:0;text-align:center}.qf-step small{font-size:11px;font-weight:800;margin-top:-4px}
@@ -134,7 +184,15 @@ const css=`
 .qf-goals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:14px 0}.qf-goals button{padding:13px 10px;background:#fff;border:1px solid #d8e2f0;color:#506787;border-radius:11px;font-size:13px;font-weight:800}.qf-goals button.active{background:#265ebe;border-color:#265ebe;color:#fff}.qf-caution{font-size:12px;color:#6a7e99;line-height:1.75}.qf-error{color:#ad3a38;font-size:12px;line-height:1.65;font-weight:800;margin-top:7px}.qf-error:empty{display:none}.qf-submit{background:#235fc7;width:100%;border:0;border-radius:12px;display:flex;justify-content:space-between;align-items:center;color:#fff;padding:17px 18px;font-size:15px;font-weight:900;margin-top:15px}.qf-submit span{font-size:20px}.qf-privacy{font-size:11px;color:#8c9baa;margin:12px 0 0;line-height:1.7}.qf-history{border:1px solid #e1eaf4;background:#fff;border-radius:15px;padding:18px}.qf-history>div:first-child{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}.qf-history b{font-size:14px}.qf-history span{font-size:11px;color:#7d8ca0}.qf-deltas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:13px}.qf-delta{border-radius:8px;background:#f6f9fe;padding:11px}.qf-delta span,.qf-delta b{display:block}.qf-delta b{font-size:15px;margin-top:8px;color:#2d5eab}
 @media(max-width:680px){.qf-intro{padding:20px}.qf-intro h2{font-size:22px}.qf-intro p{font-size:12px}.qf-step{width:61px;height:61px;font-size:25px}.qf-formgrid{grid-template-columns:1fr}.qf-card{padding:17px}.qf-preview{grid-template-columns:repeat(2,minmax(0,1fr))}.qf-goals{grid-template-columns:repeat(2,minmax(0,1fr))}.qf-deltas{grid-template-columns:repeat(2,minmax(0,1fr))}}
 `;
-const style=document.createElement('style');style.textContent=css;document.head.appendChild(style);
+const profileCss=`
+.qf-profilegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:16px}
+.qf-profilefield{display:flex;flex-direction:column;gap:8px;min-width:0;font-size:13px;color:#385378;font-weight:900}
+.qf-profilefield select,.qf-profilefield input{width:100%;min-height:50px;padding:10px 12px;background:#f7faff;border:1.5px solid #d8e2f0;color:#223e61;font-size:14px;border-radius:11px}
+.qf-profilefield select:focus,.qf-profilefield input:focus{outline:none;border-color:#366ac9}
+.qf-profilefield small{font-size:11px;color:#8192a5;line-height:1.6;font-weight:500}
+@media(max-width:680px){.qf-profilegrid{grid-template-columns:1fr}}
+`;
+const style=document.createElement('style');style.textContent=css+profileCss;document.head.appendChild(style);
 for(const x of paths){
  if(x[0]==='home')x[2]='내 계획';
  if(x[0]==='body')x[2]='인바디 빠른 입력';
