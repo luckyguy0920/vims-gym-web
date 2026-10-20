@@ -43,6 +43,7 @@ def index():
         '<script src="/quickinbody.js?v=3"></script>'
         '<script src="/kiosk.js?v=3"></script>'
         '<script src="/recipe-handoff.js?v=3"></script>'
+        '<script src="/branding.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -210,6 +211,14 @@ def redeem_plan(request:dict=Body(...)):
 @app.get("/recipe-handoff.js")
 def recipe_handoff_script():
     return FileResponse(ROOT/"recipe-handoff.js",media_type="application/javascript",headers={"Cache-Control":"no-store"})
+
+@app.get("/vims-logo.svg")
+def vims_official_logo():
+    return FileResponse(ROOT / "vims-logo.svg", media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400", "X-Content-Type-Options":"nosniff"})
+
+@app.get("/branding.js")
+def brand_script():
+    return FileResponse(ROOT / "branding.js", media_type="application/javascript", headers={"Cache-Control": "no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
