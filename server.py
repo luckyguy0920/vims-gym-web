@@ -5,7 +5,7 @@ from pathlib import Path
 import cv2,numpy as np,pytesseract
 from PIL import Image,ImageOps,ImageEnhance
 from fastapi import FastAPI,UploadFile,File,HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from starlette.concurrency import run_in_threadpool
 from concurrent.futures import ThreadPoolExecutor,TimeoutError as FutureTimeout
 ROOT=Path(__file__).resolve().parent
@@ -80,7 +80,13 @@ def run_ocr(raw):
     vals,conf,issues=alt,alt_conf,alt_issues;engine="aligned"
  return {"ok":not issues,"measurements":vals,"warnings":issues,"mode":"local","engine":engine,"confidence":conf}
 @app.get("/")
-def index():return FileResponse(ROOT/"index.html",media_type="text/html")
+def index():
+    page=(ROOT/"index.html").read_text(encoding="utf-8")
+    return HTMLResponse(page.replace("</body>", '<script src="/nutrition.js?v=2"></script></body>'))
+
+@app.get("/nutrition.js")
+def nutrition_script():
+    return FileResponse(ROOT/"nutrition.js", media_type="application/javascript")
 @app.get("/favicon.ico")
 def favicon():return FileResponse(ROOT/"favicon.svg",media_type="image/svg+xml")
 @app.get("/api/status")
