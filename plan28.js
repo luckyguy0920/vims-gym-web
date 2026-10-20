@@ -60,27 +60,47 @@ const weekText=[
 ];
 const opts=state.nutritionPrefs||{};
 function nutrition(){
- const b=state.body||{},w=val(b.weight),h=val(b.height),s=val(b.smm),pbf=val(b.pbf),fm=val(b.fatMass);
+ const b=state.body||{},p=state.profile||{},w=val(b.weight),h=val(b.height),s=val(b.smm),pbf=val(b.pbf),fm=val(b.fatMass);
  const bmi=w!=null&&h!=null&&h>0?w/(h*h/10000):null;
  const fat=fm!=null?fm:(w!=null&&pbf!=null?w*pbf/100:null);
  const lean=w!=null&&fat!=null&&fat>=0&&fat<w?w-fat:null;
- const notes=[];
- if(w==null||h==null||w<35||w>220||h<130||h>215)notes.push('인바디 신장·체중이 확인되지 않아 열량 자동 산출을 보류했습니다.');
- if(lean==null)notes.push('체지방량·체지방률 누락으로 제지방량을 계산할 수 없습니다.');
- if(bmi!=null&&(bmi<18.5||bmi>=40))notes.push('현재 체중 상태에서는 개별 영양 평가가 우선이므로 열량 목표를 제시하지 않습니다.');
- if(fm!=null&&pbf!=null&&w!=null&&Math.abs(fm/w*100-pbf)>1.5)notes.push('체지방량과 체지방률이 맞지 않으니 인바디 원본을 확인하세요.');
- if(s!=null&&w!=null&&s>=w*.65)notes.push('골격근량 값이 다른 수치와 일치하는지 원본을 확인하세요.');
- if(opts.risk)notes.push('의료적 식단 관리, 알레르기, 임신·수유 등 별도 확인이 필요합니다.');
- const kind=state.goal.kind,baseline=state.goal.activity||'low';
- const factor={low:1.35,medium:1.5,high:1.7}[baseline]||1.35;
- let maintenance=notes.length===0?Math.round((370+21.6*lean)*factor):null;
- let kcal=maintenance==null?null:Math.round((maintenance+(kind==='fat'?-Math.min(300,maintenance*.12):kind==='muscle'?Math.min(180,maintenance*.07):kind==='recomp'?-Math.min(140,maintenance*.06):0))/50)*50;
- if(kcal!=null&&(kcal<1450||kcal>3500)){notes.push('하루 열량 추정치가 안전 검토 범위 밖이므로 표시를 보류했습니다.');kcal=null;}
- const ref=w!=null&&h!=null?Math.min(w,27*(h/100)**2):w;
- const protein=ref==null?null:Math.round(ref*({fat:1.7,muscle:1.8,recomp:1.6,fitness:1.4}[kind]||1.5));
- const fats=kcal==null?null:Math.round(kcal*.29/9);
- const carbs=kcal==null||protein==null||fats==null?null:Math.round(Math.max(0,kcal-4*protein-9*fats)/4);
- return {w,h,s,pbf,fm,lean,bmi,notes,kcal,maintenance,protein,fats,carbs,kind};
+ const age=Number(p.age),sex=p.sex,activity=p.activity;
+ const notes=[],review=[];
+ const kind=(state.goal||{}).kind||'fitness';
+ if(w==null||h==null||w<35||w>220||h<130||h>215)review.push('인바디 신장·체중이 유효하지 않아 개인 열량 계산을 보류했습니다.');
+ if(lean==null)review.push('체지방량 또는 체지방률이 없어 원본 측정 결과를 확인해야 합니다.');
+ if(bmi!=null&&(bmi<18.5||bmi>=40))review.push('현재 체중 상태에서는 의료진·영양사 등 전문가의 개별 평가가 우선입니다.');
+ if(fm!=null&&pbf!=null&&w!=null&&Math.abs(fm/w*100-pbf)>1.5)review.push('체지방량과 체지방률이 일치하지 않아 결과지 확인이 필요합니다.');
+ if(s!=null&&w!=null&&s>=w*.65)review.push('골격근량 값이 다른 수치와 일치하는지 확인이 필요합니다.');
+ if(!Number.isInteger(age)||age<18||age>79||!['male','female'].includes(sex))review.push('만 나이와 대사량 계산 기준이 필요합니다.');
+ if(!['sedentary','light','moderate','high'].includes(activity))review.push('평소 활동량을 확인해 주세요.');
+ if(p.special!=='none')review.push('별도 의료적 관리·알레르기·임신·수유 등 개인별 확인이 필요합니다.');
+ if(kind==='fat'&&bmi!=null&&bmi<20.5)review.push('현재 체질량지수에서는 자동 감량 열량을 제시하지 않습니다.');
+ if(age>=65)notes.push('65세 이상은 회복 상태와 근감소 위험을 고려해 근력·식사 계획을 트레이너 및 영양 전문가와 조정하세요.');
+ const bmr=review.length?null:Math.round(10*w+6.25*h-5*age+(sex==='male'?5:-161));
+ const factor={sedentary:1.2,light:1.375,moderate:1.55,high:1.725}[activity];
+ const maintenance=bmr==null?null:Math.round(bmr*factor);
+ let shift=0;
+ if(maintenance!=null){
+  if(kind==='fat'&&age<65)shift=-Math.min(350,maintenance*.14);
+  else if(kind==='muscle')shift=Math.min(200,maintenance*.08);
+  else if(kind==='recomp'&&age<65)shift=-Math.min(120,maintenance*.05);
+  if(kind==='fat'&&age>=65)notes.push('65세 이상은 일률적인 열량 감량보다 안정적인 영양 섭취와 기능 유지부터 권장합니다.');
+ }
+ let kcal=maintenance==null?null:Math.round((maintenance+shift)/50)*50;
+ const minimum=sex==='male'?1600:1400;
+ if(kcal!=null&&(kcal<minimum||kcal<1.08*bmr||kcal>3600)){
+  review.push('계산된 열량이 자동 계획 참고 범위 밖이므로 개별 조정을 권장합니다.');
+  kcal=null;
+ }
+ const reference=w!=null&&h!=null?Math.min(w,27*(h/100)**2):null;
+ const proRate=age>=65?({fat:1.5,muscle:1.6,recomp:1.5,fitness:1.4}[kind]||1.4):
+  ({fat:1.7,muscle:1.8,recomp:1.6,fitness:1.4}[kind]||1.4);
+ const protein=kcal!=null&&reference!=null?Math.round(reference*proRate):null;
+ const fats=kcal==null?null:Math.round(kcal*.28/9);
+ const carbs=kcal==null||protein==null||fats==null?null:Math.max(0,Math.round((kcal-4*protein-9*fats)/4));
+ return {w,h,s,pbf,fm,lean,bmi,age,sex,activity,bmr,notes:[...review,...notes],needsReview:review.length>0,
+  kcal,maintenance,protein,fats,carbs,kind};
 }
 function nutrient(items){
  let a={kcal:0,p:0,c:0,f:0,fiber:0};
@@ -112,7 +132,9 @@ function meal(type,day,target,protein){
 }
 function sessionDays(week){const count=Math.max(2,Math.min(4,Math.round(weekTargets(week).sessions||3)));return {2:[1,4],3:[1,3,5],4:[1,2,4,6]}[count];}
 function session(day){
- const wk=Math.floor((day-1)/7),wd=(day-1)%7+1,slot=sessionDays(wk),index=slot.indexOf(wd),training=index>=0,wt=weekTargets(wk);
+ const wk=Math.floor((day-1)/7),wd=(day-1)%7+1,slot=sessionDays(wk),index=slot.indexOf(wd),training=index>=0;
+ const base=weekTargets(wk),older=Number(state.profile?.age)>=65;
+ const wt=older?{...base,sets:Math.min(base.sets,2),reps:'8~12회',rest:'90~120초',mins:Math.min(base.mins,120)}:base;
  const days=slot.length;
  const types=days===4?[0,2,1,5]:days===2?[0,3]:[0,1,2];
  const indexOfRoutine=training?types[(index+wk)%days]:-1;
@@ -157,8 +179,8 @@ function page(){
  stat('지방',c.fats==null?'—':money(c.fats)+' g','열량의 약 29%');
  let html=title('28일 식사·운동·휴식 통합 계획','인바디 정보와 목표 방향만으로 전반적인 4주 흐름을 한 페이지에서 확인합니다.')+
  '<div class="v28"><div class="v28banner"><div><span class="v28tag">VIMS GYM · 28 DAYS</span><h2>'+kindLabel+' · 28일 계획</h2><p>'+dname+'님의 인바디 측정 정보를 기초로 28일 식사·운동·회복을 연결했습니다.<br>하루 카드를 열어 식재료와 중량도 확인할 수 있습니다.</p></div><button class="btn light" data-plan28="print">인쇄·PDF 저장</button></div>'+
- '<div class="v28stats">'+bodyStats+'</div><div class="v28stats">'+nutritionStats+'</div>'+
- '<div class="v28note"><b>이번 계획에 반영된 정보</b>체중·신장·체지방량·체지방률·골격근량·제지방량 추정치, 기존 운동 경험과 활동량을 이용했습니다. 운동 강도와 열량은 직접 측정값이 아닌 참고용 추정입니다.'+
+ '<div class="v28stats">'+bodyStats+'</div><div class="v28note"><b>개인 특성 반영</b>'+clean(c.age)+'세 · '+(c.sex==='male'?'남성 계수':'여성 계수')+' · '+({sedentary:'활동 적음',light:'가벼운 활동',moderate:'보통 활동',high:'높은 활동량'}[c.activity]||'활동 미확인')+' · '+({beginner:'운동 초보',intermediate:'중급',advanced:'숙련'}[state.profile?.experience]||'운동 경험 미확인')+'<br>기초대사량 추정 '+(c.bmr==null?'보류':money(c.bmr)+'킬로칼로리')+' · 실제 신체상태와 생활습관에 따라 달라질 수 있습니다.</div><div class="v28stats">'+nutritionStats+'</div>'+
+ '<div class="v28note"><b>이번 계획에 반영된 정보</b>체중·신장·골격근량·체지방량과 입력하신 나이·성별 계산 계수·생활 활동량·운동 경험을 반영했습니다. 기초대사량은 추정식에 따른 값이며 실제 측정치가 아닙니다.'+
  c.notes.map(m=>'<div>• '+clean(m)+'</div>').join('')+'</div>';
  for(let w=0;w<4;w++){
   const wk=weekText[w],targets=weekTargets(w);
