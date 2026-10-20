@@ -91,7 +91,7 @@ function enhanceMeals(){
   content.innerHTML=info.meals.map(m=>{
    const id=refId(day,m.type),example=recipes.find(r=>r.id===id);
    return `<div class="vr-menurow">
-    ${example?`<img src="${example.img}" alt="${esc(example.name)} 참고 음식 사진" loading="lazy">`:'<span class="vr-emptyphoto">♨</span>'}
+    ${example?`<img src="/api/recipe/${id}/image" alt="${esc(example.name)} 참고 음식 사진" loading="lazy">`:'<span class="vr-emptyphoto">♨</span>'}
     <span class="vr-menutext"><small>${labels[m.type]}</small><b>${esc(m.title)}</b><em>약 ${fmt(m.kcal)}킬로칼로리 · ${example?'사진은 비슷한 참고 메뉴':'조리법 확인'}</em></span>
     <button type="button" data-vr-meal="${day}:${m.type}">레시피 보기</button>
    </div>`;
