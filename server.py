@@ -82,7 +82,7 @@ def run_ocr(raw):
 @app.get("/")
 def index():
     page=(ROOT/"index.html").read_text(encoding="utf-8")
-    return HTMLResponse(page.replace("</body>", '<script src="/nutrition.js?v=2"></script></body>'))
+    return HTMLResponse(page.replace("</body>", '<script src="/nutrition.js?v=2"></script><script src="/plan28.js?v=1"></script></body>'))
 
 @app.get("/nutrition.js")
 def nutrition_script():
