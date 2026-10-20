@@ -12,6 +12,13 @@ app = FastAPI(title="VIMS GYM Manual InBody")
 @app.get("/")
 def index():
     html = (ROOT / "index.html").read_text(encoding="utf-8")
+    html = html.replace(
+        "VIMS GYM | 통합 관리 웹 v8 · 인바디 자동판독 · 레시피 24종",
+        "VIMS GYM | 나의 28일 맞춤 관리",
+    ).replace(
+        "VIMS GYM 인바디270 수치 영역 판독 및 목표 선택 28일 커리큘럼",
+        "인바디부터 식사·운동·휴식까지. 빔스짐 28일 맞춤 관리.",
+    )
     # The public kiosk must never read or write previous visitors' body measurements.
     replacements = [
         ("localStorage.getItem(STORE)", "null"),
@@ -45,6 +52,7 @@ def index():
         '<script src="/kiosk.js?v=4"></script>'
         '<script src="/recipe-handoff.js?v=3"></script>'
         '<script src="/branding.js?v=2"></script>'
+        '<script src="/modern-ui.js?v=1"></script>'
     )
     return HTMLResponse(
         html.replace("</body>", scripts + "</body>"),
@@ -224,6 +232,10 @@ def brand_script():
 @app.get("/favicon.svg")
 def favicon_svg():
     return FileResponse(ROOT / "favicon.svg", media_type="image/svg+xml")
+
+@app.get("/modern-ui.js")
+def modern_ui_script():
+    return FileResponse(ROOT / "modern-ui.js", media_type="application/javascript", headers={"Cache-Control":"no-store"})
 
 @app.get("/favicon.ico")
 def favicon():
